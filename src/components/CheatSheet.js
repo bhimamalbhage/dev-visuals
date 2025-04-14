@@ -12,6 +12,7 @@ import {
   Server,
 } from "lucide-react";
 import ReactCheatSheet from "./ReactCheatSheet";
+import SystemDesignCheatSheet from "./SystemDesignCheatSheet";
 
 const CheatSheet = () => {
   const [selectedTopic, setSelectedTopic] = useState("sql");
@@ -22,8 +23,8 @@ const CheatSheet = () => {
   const topics = [
     { id: "sql", name: "SQL", icon: <Database size={20} /> },
     { id: "react", name: "React", icon: <Code size={20} /> },
-    { id: "javascript", name: "JavaScript", icon: <FileCode size={20} /> },
-    { id: "oops", name: "OOPs", icon: <Layout size={20} /> },
+    // { id: "javascript", name: "JavaScript", icon: <FileCode size={20} /> },
+    // { id: "oops", name: "OOPs", icon: <Layout size={20} /> },
     { id: "system-design", name: "System Design", icon: <Server size={20} /> },
   ];
 
@@ -49,8 +50,8 @@ const CheatSheet = () => {
       { id: "polymorphism", name: "Polymorphism" },
     ],
     "system-design": [
-      { id: "microservices", name: "Microservices" },
-      { id: "db-scaling", name: "Database Scaling" },
+      // { id: "microservices", name: "Microservices" },
+      // { id: "db-scaling", name: "Database Scaling" },
     ],
   };
 
@@ -1422,6 +1423,8 @@ CROSS JOIN Categories;`,
       }
     } else if (selectedTopic === "react") {
       return <ReactCheatSheet />;
+    } else if (selectedTopic === "system-design") {
+      return <SystemDesignCheatSheet />;
     }
 
     return (

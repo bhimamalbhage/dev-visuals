@@ -123,7 +123,7 @@ const ReactCheatSheet = () => {
           <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
             {[
               { name: 'useState', desc: 'Manages state in functional components', example: 'const [count, setCount] = useState(0);', icon: <Code size={18} /> },
-              { name: 'useEffect', desc: 'Handles side effects in components', example: 'useEffect(() => { document.title = `Count: ${count}`; });', icon: <Repeat size={18} /> },
+              { name: 'useEffect', desc: 'Handles side effects in components', example: 'useEffect(() => { document.title = "Count: " + count; });', icon: <Repeat size={18} /> },
               { name: 'useContext', desc: 'Subscribes to React context', example: 'const theme = useContext(ThemeContext);', icon: <GitBranch size={18} /> },
               { name: 'useReducer', desc: 'State management for complex logic', example: 'const [state, dispatch] = useReducer(reducer, initialState);', icon: <ArrowRight size={18} /> },
               { name: 'useCallback', desc: 'Returns memoized callback', example: 'const memoizedFn = useCallback(() => { doSomething(a, b); }, [a, b]);', icon: <Zap size={18} /> },
