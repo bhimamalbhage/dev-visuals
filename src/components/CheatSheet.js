@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import ReactCheatSheet from "./ReactCheatSheet";
 import SystemDesignCheatSheet from "./SystemDesignCheatSheet";
+import DSAPattern from "./DSAPattern";
 
 const CheatSheet = () => {
   const [selectedTopic, setSelectedTopic] = useState("sql");
@@ -23,6 +24,7 @@ const CheatSheet = () => {
   const topics = [
     { id: "sql", name: "SQL", icon: <Database size={20} /> },
     { id: "react", name: "React", icon: <Code size={20} /> },
+    { id: "dsa", name: "DSA Patterns", icon: <Server size={20} /> },
     // { id: "javascript", name: "JavaScript", icon: <FileCode size={20} /> },
     // { id: "oops", name: "OOPs", icon: <Layout size={20} /> },
     { id: "system-design", name: "System Design", icon: <Server size={20} /> },
@@ -1426,6 +1428,9 @@ CROSS JOIN Categories;`,
     } else if (selectedTopic === "system-design") {
       return <SystemDesignCheatSheet />;
     }
+    else if (selectedTopic === "dsa") {
+      return <DSAPattern />;
+    }
 
     return (
       <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
@@ -1485,7 +1490,7 @@ CROSS JOIN Categories;`,
                   }`}
                   onClick={() => {
                     setSelectedTopic(topic.id);
-                    setActiveDiagram(diagrams[topic.id][0]?.id);
+                    setActiveDiagram(diagrams?.[topic?.id]?.[0]?.id);
                     setMenuOpen(false);
                   }}
                 >
@@ -1502,13 +1507,13 @@ CROSS JOIN Categories;`,
       <div className="flex-1 p-4 md:p-6 overflow-auto">
         <header className="mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
-            {topics.find((t) => t.id === selectedTopic)?.name ||
+            {topics.find((t) => t?.id === selectedTopic)?.name ||
               "Select a Topic"}
           </h2>
         </header>
 
         {/* Diagram tabs */}
-        {diagrams[selectedTopic].length > 0 && (
+        {diagrams?.[selectedTopic]?.length > 0 && (
           <div className="mb-4">
             <div className="flex space-x-2 overflow-x-auto pb-2">
               {diagrams[selectedTopic]?.map((diagram) => (
