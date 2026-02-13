@@ -9,6 +9,7 @@ const Sidebar = ({ activeTab, onTabChange = () => {} }) => {
     { id: 'dsa', label: 'DSA Patterns', icon: Server },
     { id: 'react', label: 'React', icon: Code },
     { id: 'sql', label: 'SQL', icon: Database },
+    { id: 'db-optimization', label: 'DB Optimization', icon: CheckCircle2 },
   ];
 
   return (

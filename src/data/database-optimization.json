@@ -1,0 +1,144 @@
+{
+    "databaseOptimization": {
+        "steps": [
+            {
+                "id": "schema-design",
+                "title": "1. Schema Reform",
+                "description": "The foundation of database performance lies in how you structure your data. Bad schema design leads to complex queries and redundant data.",
+                "strategies": [
+                    "Normalization (3NF): Reduce redundancy and improve data integrity.",
+                    "Denormalization: Intentionally add redundancy to avoid expensive joins in read-heavy systems.",
+                    "Data Types: Choose the smallest data type that fits (e.g., INT vs BIGINT, VARCHAR vs TEXT).",
+                    "Partitioning: Split large tables into smaller, manageable pieces (Horizontal/Vertical)."
+                ],
+                "example": "Splitting a generic 'Users' table into 'UserAuth' (frequently accessed) and 'UserProfile' (large blobs, rarely accessed) to reduce I/O."
+            },
+            {
+                "id": "indexing",
+                "title": "2. Indexing Strategy",
+                "description": "Indexes are special lookup tables that the database search engine can use to speed up data retrieval.",
+                "strategies": [
+                    "B-Tree Indexes: Default for most queries (equality, range).",
+                    "Hash Indexes: Extremely fast for exact matches, but no range queries.",
+                    "Composite Indexes: Indexing multiple columns. Order matters (Leftmost Prefix Rule).",
+                    "Covering Indexes: Include all queried columns in the index to avoid hitting the main table (Heap)."
+                ],
+                "example": "Adding a composite index on (status, created_at) for a query filtering by status and sorting by date."
+            },
+            {
+                "id": "query-tuning",
+                "title": "3. Query Tuning",
+                "description": "Optimizing the actual SQL queries to ensure the database execution planner picks the most efficient path.",
+                "strategies": [
+                    "Avoid SELECT *: Fetch only necessary columns to reduce network/disk usage.",
+                    "N+1 Problem: Use JOINs or eager loading instead of looping queries.",
+                    "SARGable Queries: Make queries 'Search ARGument Able' (e.g., avoid functions on indexed columns in WHERE clause).",
+                    "Analyze Execution Plan: Use EXPLAIN ANALYZE to find bottlenecks."
+                ],
+                "example": "Rewriting 'WHERE YEAR(created_at) = 2023' to 'WHERE created_at BETWEEN 2023-01-01 AND 2023-12-31' so the index can be used.",
+                "deepDive": [
+                    {
+                        "title": "Understanding Execution Plans",
+                        "content": "The execution plan is your window into how the database intends to run your query. Key components to look for:",
+                        "list": [
+                            "Seq Scan / Full Table Scan: The DB is reading every row. Acceptable for small tables, terrible for large ones.",
+                            "Index Scan: The DB is using an index to find rows. This is generally what you want.",
+                            "Index Only Scan: The DB found all required data in the index itself and didn't need to visit the main table (Heap). Query Gold!",
+                            "Bitmap Heap Scan: A middle ground where multiple indexes are combined.",
+                            "Cost: An arbitrary unit of work. Lower is better."
+                        ],
+                        "code": "EXPLAIN ANALYZE\nSELECT * FROM orders\nWHERE user_id = 12345;"
+                    },
+                    {
+                        "title": "The N+1 Query Problem",
+                        "content": "A classic ORM performance killer where the code fetches a parent record, and then executes a separate query for every child record.",
+                        "comparison": {
+                            "bad": "users = db.get_users()\nfor user in users:\n  print(user.get_orders()) \n# Result: 1 query for users + N queries for orders",
+                            "good": "users = db.get_users_with_orders() \n# Result: 1 query using a JOIN or 2 queries (one for users, one for all orders)"
+                        }
+                    },
+                    {
+                        "title": "SARGable Queries",
+                        "content": "SARGable (Search ARGument ABLE) means the query can calculate the result using an index. Functions on columns destroy SARGability.",
+                        "comparison": {
+                            "bad": "SELECT * FROM logs \nWHERE YEAR(created_at) = 2023\n-- Database must run YEAR() on every row",
+                            "good": "SELECT * FROM logs \nWHERE created_at >= '2023-01-01' \nAND created_at < '2024-01-01'\n-- Database can jump directly to the range in index"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "caching-layer",
+                "title": "4. Caching Network",
+                "description": "The fastest query is the one you don't make to the database. Caching stores frequently accessed data in faster memory.",
+                "strategies": [
+                    "Query Caching: Cache result sets of identical queries (often deprecated in modern DBs, done at app level).",
+                    "Object Caching: Store hydrated objects in Redis/Memcached.",
+                    "Cache-Aside Pattern: App checks cache -> DB -> updates cache.",
+                    "Write-Through/Write-Back: Strategies for keeping cache consistent with DB."
+                ],
+                "example": "Storing the 'Top 10 Selling Products' list in Redis for 5 minutes instead of calculating it on every page load."
+            },
+            {
+                "id": "connection-pooling",
+                "title": "5. Connection Pooling",
+                "description": "Establishing a connection to a database is expensive. Pooling reuses active connections.",
+                "strategies": [
+                    "Pool Size: Configure min/max pool size based on CPU cores and heavy queries.",
+                    "Timeouts: Set aggressive connection and read timeouts to prevent locking up resources.",
+                    "Keep-Alive: Ping idle connections to prevent firewalls from dropping them.",
+                    "Proxy: Use PgBouncer or ProxySQL for massive scale."
+                ],
+                "example": "Setting max_connections to 100 on the DB, while having 1000 app instances sharing a pool via PgBouncer."
+            },
+            {
+                "id": "sharding-replication",
+                "title": "6. Scaling Out",
+                "description": "When a single server hits vertical limits (CPU/RAM/Disk), you must distribute the load.",
+                "strategies": [
+                    "Read Replicas: Offload read queries to replica servers. Master handles writes.",
+                    "Sharding (Horizontal Partitioning): Distribute rows across different servers based on a key (e.g., UserID).",
+                    "Federation: Split tables by function (e.g., Users DB, Orders DB) rather than data volume.",
+                    "Cold Storage: Move old/archived data to cheaper, slower storage (S3/Glacier)."
+                ],
+                "example": "Sharding a User database by 'Region' so US users hit the US DB cluster and EU users hit the EU cluster."
+            },
+            {
+                "id": "pagination",
+                "title": "7. Pagination & Limiting",
+                "description": "Fetching huge datasets kills performance. Use efficient pagination strategies to fetch data in chunks.",
+                "strategies": [
+                    "Limit & Offset: Simple but gets slower as offset increases (O(N)). Good for small data.",
+                    "Cursor Based (Keyset): Extremely fast (O(1)) and consistent for infinite scroll. Uses a unique column (e.g., ID or timestamp).",
+                    "Limit Results: Always enforce a hard limit on API responses (e.g., max 100 records).",
+                    "Defer Heavy Columns: Fetch IDs first, then fetch full details only for the visible items."
+                ],
+                "example": "Switching from 'OFFSET 1000000' (slow) to 'WHERE id > 1000000 LIMIT 20' (fast) for checking logs."
+            },
+            {
+                "id": "async-processing",
+                "title": "8. Asynchronous Processing",
+                "description": "Don't block the user request for heavy backend tasks. Offload them to background workers.",
+                "strategies": [
+                    "Message Queues: Use RabbitMQ, Kafka, or SQS to buffer tasks.",
+                    "Job Workers: Dedicated processes (Sidekiq, Celery, BullMQ) pick up tasks from the queue.",
+                    "Event Driven: Decouple services. 'User Signed Up' event triggers 'Send Email' and 'Create Wallet' separately.",
+                    "Batch Processing: Aggregate small updates and write them to DB in one go (Bulk Insert)."
+                ],
+                "example": "When a user exports a report, show 'Processing...' and email them the link later, instead of making the browser spin for 30s."
+            },
+            {
+                "id": "monitoring",
+                "title": "9. Monitoring & Profiling",
+                "description": "You cannot optimize what you cannot measure. Continuous visibility is key to maintaining performance.",
+                "strategies": [
+                    "Slow Query Log: Configure DB to log queries taking longer than X ms.",
+                    "APM Tools: Use Datadog, New Relic, or OpenTelemetry to trace requests from API -> DB.",
+                    "Database Metrics: Monitor CPU, Memory, IOPS, Connection Usage, and Replication Lag.",
+                    "Explain Analyze: Regularly profile critical queries as data grows to ensure indexes are still used."
+                ],
+                "example": "Setting an alert if 'Average Query Duration' exceeds 200ms or if 'CPU Usage' hits 80%."
+            }
+        ]
+    }
+}

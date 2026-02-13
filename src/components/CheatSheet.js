@@ -7,6 +7,7 @@ import QueryBasicsDiagram from "./visualizations/QueryBasicsDiagram";
 import ReactCheatSheet from "./ReactCheatSheet";
 import SystemDesignCheatSheet from "./SystemDesignCheatSheet";
 import DSAPattern from "./DSAPattern";
+import DatabaseOptimizationCheatSheet from "./DatabaseOptimizationCheatSheet";
 
 const CheatSheet = () => {
   const [selectedTopic, setSelectedTopic] = useState("system-design");
@@ -58,6 +59,8 @@ const CheatSheet = () => {
         return <DSAPattern />;
       case "system-design":
         return <SystemDesignCheatSheet />;
+      case "db-optimization":
+        return <DatabaseOptimizationCheatSheet />;
       default:
         return <div className="p-10 text-center text-slate-500">Select a topic from the sidebar</div>;
     }
@@ -68,6 +71,7 @@ const CheatSheet = () => {
     react: "React.js Ecosystem",
     dsa: "Data Structures & Algorithms",
     "system-design": "System Design Architecture",
+    "db-optimization": "Database Optimization Guide",
   };
 
   return (
