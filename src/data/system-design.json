@@ -547,6 +547,222 @@
                     }
                 ]
             }
+        },
+        "messaging": {
+            "concepts": [
+                {
+                    "id": "message-queues",
+                    "name": "Message Queues",
+                    "icon": "Layers",
+                    "description": "Asynchronous communication buffers between services. Producers send messages, Consumers process them.",
+                    "pros": [
+                        "Decoupling of services",
+                        "Buffering / Load smoothing",
+                        "Reliability (job persistence)"
+                    ],
+                    "cons": [
+                        "Added operational complexity",
+                        "Eventual consistency",
+                        "Ordering challenges"
+                    ],
+                    "example": "RabbitMQ, Amazon SQS, ActiveMQ"
+                },
+                {
+                    "id": "pub-sub",
+                    "name": "Pub/Sub",
+                    "icon": "RefreshCw",
+                    "description": "Publish/Subscribe pattern. Publishers send messages to a topic; all subscribers to that topic receive a copy.",
+                    "pros": [
+                        "One-to-many communication",
+                        "Loose coupling",
+                        "Scalable consumer groups"
+                    ],
+                    "cons": [
+                        "Message delivery guarantees vary",
+                        "Consumer management"
+                    ],
+                    "example": "Google Cloud Pub/Sub, Redis Pub/Sub, SNS"
+                },
+                {
+                    "id": "kafka",
+                    "name": "Kafka Concepts",
+                    "icon": "Server",
+                    "description": "Distributed event streaming platform. Durable, high-throughput, and scalable.",
+                    "details": [
+                        "Topic: Category/feed name for records.",
+                        "Partition: Ordered, immutable sequence of records.",
+                        "Offset: Unique identifier for a record within a partition.",
+                        "Consumer Group: Set of consumers sharing the work."
+                    ],
+                    "example": "Apache Kafka, Confluent"
+                },
+                {
+                    "id": "dlq",
+                    "name": "Dead Letter Queue",
+                    "icon": "ShieldCheck",
+                    "description": "A holding queue for messages that cannot be processed successfully after max retries.",
+                    "pros": [
+                        "Prevents data loss",
+                        "Isolates bad data for analysis",
+                        "Keeps main queue unblocked"
+                    ],
+                    "example": "SQS DLQ, RabbitMQ Dead Letter Exchange"
+                },
+                {
+                    "id": "event-sourcing",
+                    "name": "Event Sourcing",
+                    "icon": "Database",
+                    "description": "Storing state as a sequence of events rather than just the current state.",
+                    "pros": [
+                        "Complete audit trail",
+                        "Temporal query (time travel)",
+                        "High write throughput"
+                    ],
+                    "cons": [
+                        "Complex query logic (need snapshots)",
+                        "Event schema evolution is hard",
+                        "Storage growth"
+                    ],
+                    "example": "Banking ledgers, Git version control"
+                },
+                {
+                    "id": "cqrs",
+                    "name": "CQRS",
+                    "icon": "ArrowLeftRight",
+                    "description": "Command Query Responsibility Segregation. Separating read and write operations into different models.",
+                    "pros": [
+                        "Optimized read/write schemas",
+                        "Independent scaling of Reads vs Writes",
+                        "Security separation"
+                    ],
+                    "cons": [
+                        "Increased complexity",
+                        "Data consistency lag (Eventual consistency)"
+                    ],
+                    "example": "High-traffic e-commerce systems, collaborative tools"
+                }
+            ]
+        },
+        "distributedSystems": {
+            "concepts": [
+                {
+                    "id": "cap-theorem",
+                    "name": "CAP Theorem",
+                    "icon": "Database",
+                    "description": "In a distributed system, you can only satisfy two of the three guarantees: Consistency, Availability, Partition Tolerance.",
+                    "details": [
+                        "CP: Consistency + Partition Tolerance (e.g. HBase, MongoDB, Redis)",
+                        "AP: Availability + Partition Tolerance (e.g. Cassandra, CouchDB, DynamoDB)",
+                        "CA: Consistency + Availability (RDBMS - theoretically impossible in distributed systems as partitions happen)"
+                    ],
+                    "example": "Banking needs CP (Postgres/Oracle). Social Feeds need AP (Cassandra)."
+                },
+                {
+                    "id": "consistency-models",
+                    "name": "Consistency Models",
+                    "icon": "Clock",
+                    "description": "Defines the specific contract for how and when updates to the system become visible to other actors.",
+                    "types": [
+                        {
+                            "name": "Strong Consistency",
+                            "desc": "All reads receive the most recent write or an error."
+                        },
+                        {
+                            "name": "Eventual Consistency",
+                            "desc": "Reads effectively return the most recent write, but maybe not immediately."
+                        },
+                        {
+                            "name": "Causal Consistency",
+                            "desc": "Writes that are potentially causally related must be seen by all processes in the same order."
+                        }
+                    ],
+                    "example": "Strong: Bank Balance. Eventual: DNS, YouTube View Count."
+                },
+                {
+                    "id": "leader-election",
+                    "name": "Leader Election",
+                    "icon": "ShieldCheck",
+                    "description": "Process of designating a single process as the organizer of some task among several computers (nodes).",
+                    "details": [
+                        "Needed to avoid conflicts and ensure coordination.",
+                        "Common algorithms: Bully Algorithm, Ring Algorithm.",
+                        "Used in databases (Primary/Replica) and coordination services (Zookeeper)."
+                    ],
+                    "example": "Kubernetes Controller Manager, Kafka Controller, MongoDB Primary."
+                },
+                {
+                    "id": "consensus",
+                    "name": "Consensus (Raft/Paxos)",
+                    "icon": "Handshake",
+                    "description": "The process of getting all nodes in a distributed system to agree on a single data value or state, even if some nodes fail.",
+                    "details": [
+                        "Paxos: The original, theoretically rigorous but complex consensus algorithm.",
+                        "Raft: Designed to be understandable. Uses Leader Election + Log Replication.",
+                        "Goal: Fault Tolerance. System works as long as a quorum (majority) is up."
+                    ],
+                    "example": "Etcd (Kubernetes), Consul, Zookeeper."
+                },
+                {
+                    "id": "distributed-locking",
+                    "name": "Distributed Locking",
+                    "icon": "Lock",
+                    "description": "A technique to control access to a shared resource by multiple processes in a distributed environment.",
+                    "details": [
+                        "Prevents race conditions across different servers.",
+                        "Must handle node failures (TTL/Leases).",
+                        "Tools: Redis (Redlock), Zookeeper, Etcd."
+                    ],
+                    "example": "Preventing a cron job from running twice on different servers."
+                },
+                {
+                    "id": "quorum",
+                    "name": "Quorum",
+                    "icon": "Users",
+                    "description": "The minimum number of votes that a distributed transaction has to obtain to be allowed to perform an operation.",
+                    "details": [
+                        "N = Total Nodes, R = Read Quorum, W = Write Quorum.",
+                        "Strong Consistency: R + W > N.",
+                        "Ensures read returns the latest write."
+                    ],
+                    "example": "Cassandra (tunable consistency), DynamoDB."
+                },
+                {
+                    "id": "gossip-protocol",
+                    "name": "Gossip Protocol",
+                    "icon": "MessageCircle",
+                    "description": "A peer-to-peer communication protocol where nodes share information about themselves and other nodes periodically.",
+                    "details": [
+                        "Scalable and Fault Tolerant.",
+                        "Eventual Consistency.",
+                        "Used for failure detection and cluster membership."
+                    ],
+                    "example": "Cassandra ring membership, Amazon S3, Bitcoin."
+                },
+                {
+                    "id": "vector-clocks",
+                    "name": "Vector Clocks",
+                    "icon": "Clock",
+                    "description": "A data structure used for determining the partial ordering of events in a distributed system and detecting causality violations.",
+                    "details": [
+                        "Replaces physical time (which is unreliable).",
+                        "Helps resolve conflicts (e.g. sibling creation).",
+                        "Used in Dynamo-style databases."
+                    ],
+                    "example": "Riak, Amazon Dynamo."
+                },
+                {
+                    "id": "split-brain",
+                    "name": "Split Brain",
+                    "icon": "Zap",
+                    "description": "A condition where a network partition causes two distinct parts of a distributed system to believe they are the authoritative master.",
+                    "details": [
+                        "Dangerous: Leads to data corruption/inconsistency.",
+                        "Prevention: Fencing, Quorums (Odd number of nodes).",
+                        "STONITH (Shoot The Other Node In The Head)."
+                    ],
+                    "example": "Elasticsearch cluster partition, Database failover gone wrong."
+                }
+            ]
         }
     }
 }

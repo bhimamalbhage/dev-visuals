@@ -12,7 +12,10 @@ import {
   Lock,
   ShieldCheck,
   RefreshCw,
-  Zap
+  Zap,
+  Users,
+  Handshake,
+  MessageCircle
 } from 'lucide-react';
 import systemDesignData from '../data/system-design.json';
 
@@ -32,7 +35,10 @@ const SystemDesignCheatSheet = () => {
       Lock: <Lock size={20} />,
       ShieldCheck: <ShieldCheck size={20} />,
       RefreshCw: <RefreshCw size={20} />,
-      Zap: <Zap size={20} />
+      Zap: <Zap size={20} />,
+      Users: <Users size={20} />,
+      Handshake: <Handshake size={20} />,
+      MessageCircle: <MessageCircle size={20} />
     };
     return icons[iconName] || <Globe size={20} />;
   };
@@ -814,27 +820,692 @@ const SystemDesignCheatSheet = () => {
     )
   }
   
-  // Update diagrams list to include Networking
-  // The list needs to be manual to link to IDs if we want custom ordering, 
-  // or we can strictly use the JSON. 
-  // For safety, I'll combine them or just hardcode the tabs to ensure render order.
+  const MessagingDiagram = () => {
+    const [selectedId, setSelectedId] = useState('message-queues');
+    const { messaging } = systemDesignData.systemDesign;
+    const concept = messaging.concepts.find(c => c.id === selectedId);
+
+    const messagingDiagrams = {
+      'message-queues': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <rect x="20" y="80" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+           <text x="45" y="105" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Producer</text>
+
+           <rect x="100" y="70" width="80" height="60" rx="4" fill="#e2e8f0" stroke="#64748b" strokeWidth="2" />
+           <text x="140" y="60" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="bold">Queue</text>
+           <rect x="110" y="80" width="10" height="40" fill="#93c5fd" />
+           <rect x="125" y="80" width="10" height="40" fill="#93c5fd" />
+           <rect x="140" y="80" width="10" height="40" fill="#93c5fd" />
+           <rect x="155" y="80" width="10" height="40" fill="#93c5fd" />
+
+           <rect x="210" y="80" width="50" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="235" y="105" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Consumer</text>
+
+           <line x1="70" y1="100" x2="100" y2="100" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+           <line x1="180" y1="100" x2="210" y2="100" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+        </svg>
+      ),
+      'pub-sub': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <rect x="20" y="80" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+           <text x="45" y="105" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Publisher</text>
+
+           <circle cx="140" cy="100" r="25" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+           <text x="140" y="104" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">Topic</text>
+
+           <rect x="210" y="30" width="50" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="235" y="55" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">Sub A</text>
+
+           <rect x="210" y="80" width="50" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="235" y="105" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">Sub B</text>
+
+           <rect x="210" y="130" width="50" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="235" y="155" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">Sub C</text>
+
+           <line x1="70" y1="100" x2="115" y2="100" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+           <line x1="165" y1="100" x2="210" y2="50" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#arrow)" />
+           <line x1="165" y1="100" x2="210" y2="100" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#arrow)" />
+           <line x1="165" y1="100" x2="210" y2="150" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#arrow)" />
+        </svg>
+      ),
+      'kafka': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <text x="140" y="30" textAnchor="middle" fill="#475569" fontSize="12" fontWeight="bold">Topic Partition</text>
+           
+           {/* Partition Blocks */}
+           <rect x="40" y="50" width="200" height="40" fill="#e2e8f0" rx="4" />
+           <rect x="50" y="55" width="30" height="30" fill="#94a3b8" stroke="#475569" />
+           <text x="65" y="75" textAnchor="middle" fill="white" fontSize="10">0</text>
+           <rect x="85" y="55" width="30" height="30" fill="#94a3b8" stroke="#475569" />
+           <text x="100" y="75" textAnchor="middle" fill="white" fontSize="10">1</text>
+           <rect x="120" y="55" width="30" height="30" fill="#94a3b8" stroke="#475569" />
+           <text x="135" y="75" textAnchor="middle" fill="white" fontSize="10">2</text>
+           <rect x="155" y="55" width="30" height="30" fill="#94a3b8" stroke="#475569" />
+           <text x="170" y="75" textAnchor="middle" fill="white" fontSize="10">3</text>
+           
+           <text x="215" y="75" textAnchor="middle" fill="#64748b" fontSize="12">...</text>
+
+           {/* Consumers */}
+           <rect x="60" y="120" width="60" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="90" y="145" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Con A</text>
+           <path d="M90,120 L100,85" stroke="#22c55e" strokeWidth="1.5" markerEnd="url(#arrow)" strokeDasharray="3,3" />
+
+           <rect x="160" y="120" width="60" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="190" y="145" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Con B</text>
+           <path d="M190,120 L170,85" stroke="#22c55e" strokeWidth="1.5" markerEnd="url(#arrow)" strokeDasharray="3,3" />
+
+           <text x="140" y="180" textAnchor="middle" fill="#475569" fontSize="10">Consumer Group</text>
+           <rect x="50" y="110" width="180" height="60" rx="8" fill="none" stroke="#64748b" strokeWidth="1" strokeDasharray="4,4" />
+        </svg>
+      ),
+      'dlq': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <rect x="20" y="80" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+           <text x="45" y="105" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Source</text>
+
+           <text x="140" y="45" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="bold">Main Queue</text>
+           <rect x="100" y="55" width="80" height="50" rx="4" fill="#e2e8f0" stroke="#64748b" strokeWidth="2" />
+           <path d="M70,90 L100,80" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+           <rect x="210" y="80" width="50" height="40" rx="4" fill="#fecaca" stroke="#ef4444" strokeWidth="2" />
+           <text x="235" y="105" textAnchor="middle" fill="#991b1b" fontSize="8" fontWeight="bold">Fail x3</text>
+           
+           <path d="M180,80 L210,90" stroke="#ef4444" strokeWidth="2" markerEnd="url(#arrow)" />
+           
+           <path d="M235,120 L235,140 L180,140" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="4,4" />
+           
+           <text x="140" y="130" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="bold">DLQ</text>
+           <rect x="100" y="140" width="80" height="40" rx="4" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="2" />
+           <text x="140" y="165" textAnchor="middle" fill="#64748b" fontSize="10">Holding Area</text>
+
+        </svg>
+      ),
+      'event-sourcing': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <text x="140" y="30" textAnchor="middle" fill="#475569" fontSize="12" fontWeight="bold">Event Log (Append Only)</text>
+           
+           <rect x="40" y="50" width="200" height="120" rx="4" fill="#f8fafc" stroke="#e2e8f0" />
+           
+           <rect x="60" y="60" width="160" height="25" rx="2" fill="#bfdbfe" stroke="#3b82f6" />
+           <text x="140" y="77" textAnchor="middle" fill="#1e40af" fontSize="10">Event: AccountCreated</text>
+           
+           <rect x="60" y="95" width="160" height="25" rx="2" fill="#bfdbfe" stroke="#3b82f6" />
+           <text x="140" y="112" textAnchor="middle" fill="#1e40af" fontSize="10">Event: Deposited $100</text>
+           
+           <rect x="60" y="130" width="160" height="25" rx="2" fill="#bfdbfe" stroke="#3b82f6" />
+           <text x="140" y="147" textAnchor="middle" fill="#1e40af" fontSize="10">Event: Withdrawn $20</text>
+           
+           <line x1="140" y1="85" x2="140" y2="95" stroke="#64748b" strokeWidth="1" />
+           <line x1="140" y1="120" x2="140" y2="130" stroke="#64748b" strokeWidth="1" />
+
+           <text x="220" y="185" textAnchor="middle" fill="#166534" fontSize="12" fontWeight="bold">Current: $80</text>
+        </svg>
+      ),
+      'cqrs': (
+        <svg width="280" height="200" viewBox="0 0 280 200">
+           <rect x="20" y="80" width="40" height="40" rx="50" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+           <text x="40" y="105" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">UI</text>
+
+           <path d="M40,80 L80,50" stroke="#3b82f6" strokeWidth="2" markerEnd="url(#arrow)" />
+           <path d="M80,150 L40,120" stroke="#22c55e" strokeWidth="2" markerEnd="url(#arrow)" />
+
+           <rect x="80" y="30" width="70" height="40" rx="4" fill="#fecaca" stroke="#ef4444" strokeWidth="2" />
+           <text x="115" y="55" textAnchor="middle" fill="#991b1b" fontSize="10" fontWeight="bold">Command</text>
+           <text x="115" y="66" textAnchor="middle" fill="#991b1b" fontSize="8">(Write)</text>
+
+           <rect x="80" y="130" width="70" height="40" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+           <text x="115" y="155" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Query</text>
+           <text x="115" y="166" textAnchor="middle" fill="#166534" fontSize="8">(Read)</text>
+
+           <rect x="190" y="30" width="60" height="50" rx="4" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
+           <text x="220" y="55" textAnchor="middle" fill="#475569" fontSize="8">Write DB</text>
+           <text x="220" y="65" textAnchor="middle" fill="#475569" fontSize="8">(Normalized)</text>
+
+           <rect x="190" y="125" width="60" height="50" rx="4" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
+           <text x="220" y="150" textAnchor="middle" fill="#475569" fontSize="8">Read DB</text>
+           <text x="220" y="160" textAnchor="middle" fill="#475569" fontSize="8">(Denormalized)</text>
+
+           <path d="M150,50 L190,50" stroke="#ef4444" strokeWidth="1.5" markerEnd="url(#arrow)" />
+           <path d="M190,150 L150,150" stroke="#22c55e" strokeWidth="1.5" markerEnd="url(#arrow)" />
+           
+           <path d="M220,80 L220,125" stroke="#64748b" strokeWidth="2" strokeDasharray="4,2" markerEnd="url(#arrow)" />
+           <text x="250" y="105" textAnchor="middle" fill="#64748b" fontSize="8">Sync</text>
+        </svg>
+      )
+    };
+
+    return (
+      <div className="w-full bg-gray-50 rounded-lg p-4 overflow-auto" style={{ height: 'calc(100vh - 200px)' }}>
+          <h3 className="text-lg font-bold mb-4 text-center">Messaging & Streaming</h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            {messaging.concepts.map(c => (
+              <div 
+                key={c.id}
+                className={`p-3 flex items-center justify-center rounded-lg cursor-pointer transition-all ${
+                  selectedId === c.id 
+                    ? 'bg-blue-100 border-2 border-blue-500' 
+                    : 'bg-white border border-gray-200 hover:border-blue-300'
+                }`}
+                onClick={() => setSelectedId(c.id)}
+              >
+                <span className="mr-2">{getIcon(c.icon)}</span>
+                <span className="font-medium text-sm">{c.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                   <h4 className="text-xl font-bold text-blue-700 mb-3">{concept.name}</h4>
+                   <p className="text-gray-700 mb-4">{concept.description}</p>
+                   
+                   {concept.details && (
+                      <ul className="list-disc pl-5 space-y-1 text-gray-600 mb-4">
+                        {concept.details.map((d, i) => <li key={i}>{d}</li>)}
+                      </ul>
+                   )}
+
+                   {concept.pros && (
+                     <div className="mb-4">
+                       <h5 className="font-semibold text-green-700 mb-2">Pros:</h5>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                          {concept.pros.map((p, i) => <li key={i}>{p}</li>)}
+                        </ul>
+                     </div>
+                   )}
+
+                   {concept.cons && (
+                     <div className="mb-4">
+                       <h5 className="font-semibold text-red-700 mb-2">Cons:</h5>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                          {concept.cons.map((c, i) => <li key={i}>{c}</li>)}
+                        </ul>
+                     </div>
+                   )}
+
+                   <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+                      <h5 className="font-semibold text-gray-700 mb-1 text-xs uppercase">Example:</h5>
+                      <p className="text-gray-600 text-sm">{concept.example}</p>
+                   </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center bg-gray-50 rounded p-4 border border-gray-100">
+                   {messagingDiagrams[selectedId] || <div className="text-gray-400">Diagram coming soon</div>}
+                </div>
+             </div>
+          </div>
+      </div>
+    );
+  };
+
+  const EndToEndDiagram = () => {
+    return (
+      <div className="w-full bg-gray-50 rounded-lg p-4 overflow-auto" style={{ height: 'calc(100vh - 200px)' }}>
+          <h3 className="text-lg font-bold mb-4 text-center">End-to-End System Flow</h3>
+          
+          <div className="bg-white p-6 rounded shadow overflow-x-auto">
+            <div className="min-w-[1000px] flex flex-col items-center">
+              <svg width="1000" height="500" viewBox="0 0 1000 500">
+                {/* 1. Client */}
+                <g transform="translate(20, 200)">
+                   <circle cx="30" cy="30" r="20" fill="#fca5a5" stroke="#ef4444" strokeWidth="2" />
+                   <text x="30" y="70" textAnchor="middle" fill="#7f1d1d" fontSize="12" fontWeight="bold">Client</text>
+                </g>
+
+                {/* Arrow to Forward Proxy */}
+                <path d="M70,230 L90,230" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 2. Forward Proxy */}
+                <g transform="translate(90, 200)">
+                   <rect x="0" y="0" width="60" height="60" rx="4" fill="#e5e7eb" stroke="#6b7280" strokeWidth="2" strokeDasharray="4,2" />
+                   <text x="30" y="25" textAnchor="middle" fill="#374151" fontSize="10" fontWeight="bold">Forward</text>
+                   <text x="30" y="40" textAnchor="middle" fill="#374151" fontSize="10" fontWeight="bold">Proxy</text>
+                </g>
+
+                {/* Arrow to Internet/DNS boundary */}
+                <path d="M150,230 L180,100" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="5,5" />
+                <path d="M150,230 L180,350" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="5,5" />
+                <path d="M150,230 L260,230" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 3. DNS */}
+                <g transform="translate(160, 50)">
+                   <rect x="0" y="0" width="80" height="40" rx="4" fill="#e2e8f0" stroke="#64748b" strokeWidth="2" />
+                   <text x="40" y="25" textAnchor="middle" fill="#1e293b" fontSize="12" fontWeight="bold">DNS</text>
+                </g>
+
+                {/* 4. CDN */}
+                <g transform="translate(160, 350)">
+                   <rect x="0" y="0" width="80" height="40" rx="4" fill="#a5f3fc" stroke="#0891b2" strokeWidth="2" />
+                   <text x="40" y="25" textAnchor="middle" fill="#0e7490" fontSize="12" fontWeight="bold">CDN</text>
+                </g>
+
+                 {/* 5. Load Balancer / Reverse Proxy */}
+                <g transform="translate(260, 200)">
+                   <rect x="0" y="0" width="60" height="60" rx="4" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+                   <text x="30" y="25" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">Load</text>
+                   <text x="30" y="38" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">Balancer</text>
+                   <text x="30" y="52" textAnchor="middle" fill="#92400e" fontSize="8">(Reverse Proxy)</text>
+                </g>
+
+                {/* Arrow to API Gateway */}
+                <path d="M320,230 L350,230" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 6. API Gateway */}
+                <g transform="translate(350, 200)">
+                   <rect x="0" y="0" width="60" height="60" rx="4" fill="#ddd6fe" stroke="#7c3aed" strokeWidth="2" />
+                   <text x="30" y="25" textAnchor="middle" fill="#5b21b6" fontSize="10" fontWeight="bold">API</text>
+                   <text x="30" y="40" textAnchor="middle" fill="#5b21b6" fontSize="10" fontWeight="bold">Gateway</text>
+                </g>
+
+                {/* Arrows to Services */}
+                <path d="M410,230 L450,150" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+                <path d="M410,230 L450,310" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 7. Web/App Servers */}
+                <g transform="translate(450, 120)">
+                   <rect x="0" y="0" width="80" height="60" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                   <text x="40" y="35" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Service A</text>
+                </g>
+                <g transform="translate(450, 280)">
+                   <rect x="0" y="0" width="80" height="60" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                   <text x="40" y="35" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Service B</text>
+                </g>
+
+                {/* Arrow to Cache */}
+                <path d="M530,150 L650,140" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+                
+                {/* 8. Cache */}
+                <g transform="translate(650, 100)">
+                   <rect x="0" y="0" width="80" height="60" rx="4" fill="#ffd166" stroke="#d97706" strokeWidth="2" />
+                   <text x="40" y="35" textAnchor="middle" fill="#b45309" fontSize="12" fontWeight="bold">Cache</text>
+                   <text x="40" y="50" textAnchor="middle" fill="#b45309" fontSize="8">(Redis)</text>
+                </g>
+
+                {/* Arrow to DB */}
+                <path d="M530,310 L650,320" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 9. Database */}
+                <g transform="translate(650, 300)">
+                   <rect x="0" y="0" width="80" height="60" rx="4" fill="#c7d2fe" stroke="#4f46e5" strokeWidth="2" />
+                   <text x="40" y="25" textAnchor="middle" fill="#312e81" fontSize="12" fontWeight="bold">Primary DB</text>
+                   <line x1="10" y1="35" x2="70" y2="35" stroke="#4f46e5" strokeWidth="1" />
+                   <line x1="10" y1="40" x2="70" y2="40" stroke="#4f46e5" strokeWidth="1" />
+                   <line x1="10" y1="45" x2="70" y2="45" stroke="#4f46e5" strokeWidth="1" />
+                </g>
+                
+                 {/* Read Replicas */}
+                <g transform="translate(750, 300)">
+                   <rect x="0" y="0" width="60" height="40" rx="4" fill="#e0e7ff" stroke="#6366f1" strokeWidth="1" strokeDasharray="4,2" />
+                   <text x="30" y="25" textAnchor="middle" fill="#4338ca" fontSize="8" fontWeight="bold">Read Replica</text>
+                   <path d="M-20,30 L0,30" stroke="#6366f1" strokeWidth="1" markerEnd="url(#arrow)" />
+                </g>
+
+                {/* Arrow to Queue */}
+                <path d="M490,340 L490,420 L530,420" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 10. Message Queue */}
+                <g transform="translate(530, 400)">
+                   <rect x="0" y="0" width="80" height="40" rx="4" fill="#d8b4fe" stroke="#9333ea" strokeWidth="2" />
+                   <text x="40" y="20" textAnchor="middle" fill="#581c87" fontSize="10" fontWeight="bold">Msg Queue</text>
+                   <rect x="10" y="25" width="5" height="10" fill="#9333ea" />
+                   <rect x="20" y="25" width="5" height="10" fill="#9333ea" />
+                   <rect x="30" y="25" width="5" height="10" fill="#9333ea" />
+                </g>
+
+                {/* Arrow to Workers */}
+                <path d="M610,420 L650,420" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+                {/* 11. Workers */}
+                <g transform="translate(650, 400)">
+                   <rect x="0" y="0" width="80" height="40" rx="4" fill="#f0abfc" stroke="#c026d3" strokeWidth="2" />
+                   <text x="40" y="25" textAnchor="middle" fill="#701a75" fontSize="10" fontWeight="bold">Async Workers</text>
+                </g>
+                
+                {/* Arrow Workers to DB */}
+                <path d="M690,400 L690,360" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" strokeDasharray="4,2" />
+
+              </svg>
+
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div className="border p-3 rounded bg-blue-50">
+                      <h4 className="font-bold text-blue-800 text-sm mb-1">1. Traffic Entry & Proxies</h4>
+                      <p className="text-xs text-gray-600">
+                        <strong>Client</strong> can use a <strong>Forward Proxy</strong> (e.g. VPN) for anonymity.
+                        Traffic hits **DNS** then **LB (Reverse Proxy)** which handles SSL termination and routing.
+                      </p>
+                  </div>
+                  <div className="border p-3 rounded bg-indigo-50">
+                      <h4 className="font-bold text-indigo-800 text-sm mb-1">2. Gateway & Application</h4>
+                      <p className="text-xs text-gray-600">
+                        <strong>API Gateway</strong> manages auth, rate limiting, and routing to specific <strong>Services</strong>.
+                        Services handle the core business logic.
+                      </p>
+                  </div>
+                  <div className="border p-3 rounded bg-yellow-50">
+                      <h4 className="font-bold text-yellow-800 text-sm mb-1">3. Data Layer</h4>
+                      <p className="text-xs text-gray-600">Hot data is fetched from Cache (fast). Persistent data is stored in the Database (Writes to Master, Reads from Replicas for scale).</p>
+                  </div>
+                   <div className="border p-3 rounded bg-purple-50">
+                      <h4 className="font-bold text-purple-800 text-sm mb-1">4. Async Processing</h4>
+                      <p className="text-xs text-gray-600">Heavy/Background tasks (e.g., emails, report generation) are sent to a Message Queue and processed by Worker services asynchronously.</p>
+                  </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    )
+  };
+
+  const DistributedSystemsDiagram = () => {
+    const [selectedId, setSelectedId] = useState('cap-theorem');
+    const { distributedSystems } = systemDesignData.systemDesign;
+    const concept = distributedSystems.concepts.find(c => c.id === selectedId);
+
+    const dsDiagrams = {
+        'cap-theorem': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <circle cx="100" cy="80" r="50" fill="#fca5a5" stroke="#ef4444" strokeWidth="2" fillOpacity="0.5" />
+             <text x="100" y="80" textAnchor="middle" fill="#7f1d1d" fontSize="10" fontWeight="bold">Consistency</text>
+
+             <circle cx="180" cy="80" r="50" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" fillOpacity="0.5" />
+             <text x="180" y="80" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Availability</text>
+
+             <circle cx="140" cy="140" r="50" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" fillOpacity="0.5" />
+             <text x="140" y="150" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Partition</text>
+             <text x="140" y="160" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Tolerance</text>
+
+             <text x="140" y="90" textAnchor="middle" fill="#475569" fontSize="8" fontWeight="bold">CA</text>
+             <text x="100" y="130" textAnchor="middle" fill="#475569" fontSize="8" fontWeight="bold">CP</text>
+             <text x="180" y="130" textAnchor="middle" fill="#475569" fontSize="8" fontWeight="bold">AP</text>
+          </svg>
+        ),
+        'consistency-models': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <text x="40" y="30" fill="#1e40af" fontSize="10" fontWeight="bold">Strong (Linearizability)</text>
+             <line x1="20" y1="50" x2="260" y2="50" stroke="#64748b" strokeWidth="1" />
+             <rect x="40" y="40" width="20" height="20" fill="#bfdbfe" stroke="#3b82f6" />
+             <text x="50" y="54" textAnchor="middle" fontSize="8">W(x)</text>
+             
+             <rect x="100" y="40" width="20" height="20" fill="#bbf7d0" stroke="#22c55e" />
+             <text x="110" y="54" textAnchor="middle" fontSize="8">R(x)</text>
+             <text x="110" y="75" textAnchor="middle" fontSize="8" fill="#166534">Must see W(x)</text>
+
+             <text x="40" y="120" fill="#9a3412" fontSize="10" fontWeight="bold">Eventual Consistency</text>
+             <line x1="20" y1="140" x2="260" y2="140" stroke="#64748b" strokeWidth="1" />
+             
+             <rect x="40" y="130" width="20" height="20" fill="#fed7aa" stroke="#f97316" />
+             <text x="50" y="144" textAnchor="middle" fontSize="8">W(y)</text>
+
+             <rect x="100" y="130" width="20" height="20" fill="#e2e8f0" stroke="#64748b" />
+             <text x="110" y="144" textAnchor="middle" fontSize="8">R(y)</text>
+             <text x="110" y="165" textAnchor="middle" fontSize="8" fill="#64748b">Might see old</text>
+
+             <rect x="200" y="130" width="20" height="20" fill="#bbf7d0" stroke="#22c55e" />
+             <text x="210" y="144" textAnchor="middle" fontSize="8">R(y)</text>
+             <text x="210" y="165" textAnchor="middle" fontSize="8" fill="#166534">Eventually sees new</text>
+          </svg>
+        ),
+        'leader-election': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <circle cx="140" cy="50" r="25" fill="#fcd34d" stroke="#d97706" strokeWidth="3" />
+             <text x="140" y="54" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">Leader</text>
+             <path d="M120,30 L130,20 L140,30 L150,20 L160,30" fill="none" stroke="#d97706" strokeWidth="2" />
+
+             <circle cx="70" cy="140" r="20" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="70" y="144" textAnchor="middle" fill="#1e40af" fontSize="10">Follower</text>
+
+             <circle cx="140" cy="140" r="20" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="140" y="144" textAnchor="middle" fill="#1e40af" fontSize="10">Follower</text>
+
+             <circle cx="210" cy="140" r="20" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="210" y="144" textAnchor="middle" fill="#1e40af" fontSize="10">Follower</text>
+
+             <path d="M140,80 L70,115" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" markerEnd="url(#arrow)" />
+             <path d="M140,80 L140,115" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" markerEnd="url(#arrow)" />
+             <path d="M140,80 L210,115" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" markerEnd="url(#arrow)" />
+             
+             <text x="180" y="100" textAnchor="middle" fill="#64748b" fontSize="8">Heartbeats</text>
+          </svg>
+        ),
+        'consensus': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <rect x="20" y="80" width="40" height="40" rx="4" fill="#f8fafc" stroke="#64748b" strokeWidth="2" />
+             <text x="40" y="105" textAnchor="middle" fill="#475569" fontSize="10">Client</text>
+
+             <rect x="100" y="60" width="50" height="80" rx="4" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+             <text x="125" y="105" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">Leader</text>
+
+             <path d="M60,90 L100,90" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)" />
+             <text x="80" y="85" textAnchor="middle" fill="#475569" fontSize="8">Propose</text>
+
+             <rect x="200" y="30" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="225" y="55" textAnchor="middle" fill="#1e40af" fontSize="10">Peer A</text>
+
+             <rect x="200" y="80" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="225" y="105" textAnchor="middle" fill="#1e40af" fontSize="10">Peer B</text>
+
+             <rect x="200" y="130" width="50" height="40" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="225" y="155" textAnchor="middle" fill="#1e40af" fontSize="10">Peer C</text>
+
+             <path d="M150,80 L200,50" stroke="#64748b" strokeWidth="1.5" strokeDasharray="3,2" />
+             <path d="M150,100 L200,100" stroke="#64748b" strokeWidth="1.5" strokeDasharray="3,2" />
+             <path d="M150,120 L200,150" stroke="#64748b" strokeWidth="1.5" strokeDasharray="3,2" />
+
+             <text x="175" y="45" textAnchor="middle" fill="#64748b" fontSize="8">Replicate Log</text>
+          </svg>
+        ),
+         'distributed-locking': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <rect x="110" y="80" width="60" height="60" rx="4" fill="#64748b" stroke="#334155" strokeWidth="2" />
+             <rect x="135" y="90" width="10" height="15" rx="2" fill="#e2e8f0" />
+             <rect x="130" y="105" width="20" height="15" rx="2" fill="#e2e8f0" />
+             <text x="140" y="130" textAnchor="middle" fill="#f8fafc" fontSize="10" fontWeight="bold">Resource</text>
+
+             <circle cx="50" cy="50" r="15" fill="#fca5a5" stroke="#ef4444" strokeWidth="2" />
+             <text x="50" y="54" textAnchor="middle" fill="#7f1d1d" fontSize="8">Proc A</text>
+             <circle cx="50" cy="150" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="50" y="154" textAnchor="middle" fill="#1e40af" fontSize="8">Proc B</text>
+             <circle cx="230" cy="100" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="230" y="104" textAnchor="middle" fill="#1e40af" fontSize="8">Proc C</text>
+
+             <path d="M65,58 L110,85" stroke="#ef4444" strokeWidth="2" />
+             <path d="M100,75 L80,55" stroke="#ef4444" strokeWidth="2" fill="none" />
+             <path d="M80,75 L100,55" stroke="#ef4444" strokeWidth="2" fill="none" />
+             
+             <path d="M65,142 L110,115" stroke="#3b82f6" strokeWidth="2" />
+             <path d="M215,100 L170,105" stroke="#3b82f6" strokeWidth="2" />
+
+             <rect x="120" y="20" width="40" height="40" rx="4" fill="#d8b4fe" stroke="#9333ea" strokeWidth="2" />
+             <text x="140" y="45" textAnchor="middle" fill="#581c87" fontSize="8" fontWeight="bold">Lock Mgr</text>
+             
+             <path d="M60,40 L120,40" stroke="#64748b" strokeWidth="1.5" strokeDasharray="3,2" />
+             <text x="90" y="35" textAnchor="middle" fill="#64748b" fontSize="8">Acquire?</text>
+          </svg>
+        ),
+        'quorum': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <circle cx="80" cy="130" r="30" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <text x="80" y="135" textAnchor="middle" fill="#1e40af" fontSize="12" fontWeight="bold">N=3</text>
+
+             <circle cx="140" cy="80" r="30" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+             <text x="140" y="85" textAnchor="middle" fill="#166534" fontSize="12" fontWeight="bold">R=2</text>
+             
+             <circle cx="200" cy="130" r="30" fill="#fca5a5" stroke="#ef4444" strokeWidth="2" />
+             <text x="200" y="135" textAnchor="middle" fill="#991b1b" fontSize="12" fontWeight="bold">W=2</text>
+
+             <text x="140" y="180" textAnchor="middle" fill="#475569" fontSize="12">R + W {'>'} N</text>
+             <text x="140" y="195" textAnchor="middle" fill="#475569" fontSize="10">(2 + 2 {'>'} 3)</text>
+             
+             <path d="M110,110 L140,110" stroke="#475569" strokeWidth="2" />
+             <path d="M170,110 L140,110" stroke="#475569" strokeWidth="2" />
+             <text x="140" y="125" textAnchor="middle" fill="#475569" fontSize="8">Overlap ensures correct read</text>
+          </svg>
+        ),
+        'gossip-protocol': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <circle cx="60" cy="60" r="15" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+             <circle cx="140" cy="40" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <circle cx="220" cy="60" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             
+             <circle cx="60" cy="140" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <circle cx="140" cy="160" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+             <circle cx="220" cy="140" r="15" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+
+             {/* Connections */}
+             <line x1="75" y1="60" x2="125" y2="45" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             <line x1="155" y1="45" x2="205" y2="60" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             
+             <line x1="60" y1="75" x2="60" y2="125" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             <line x1="220" y1="75" x2="220" y2="125" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             
+             <line x1="75" y1="140" x2="125" y2="155" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             <line x1="155" y1="155" x2="205" y2="140" stroke="#64748b" strokeWidth="1" strokeDasharray="3,3" />
+             
+             {/* Random spread */}
+             <path d="M75,65 L130,150" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow)" />
+             <path d="M75,60 L205,60" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow)" />
+
+             <text x="140" y="100" textAnchor="middle" fill="#64748b" fontSize="10">Random peer selection</text>
+          </svg>
+        ),
+        'vector-clocks': (
+          <svg width="280" height="200" viewBox="0 0 280 200">
+             <line x1="40" y1="40" x2="40" y2="180" stroke="#64748b" strokeWidth="2" />
+             <text x="40" y="30" textAnchor="middle" fill="#475569" fontSize="10">Node A</text>
+             
+             <line x1="240" y1="40" x2="240" y2="180" stroke="#64748b" strokeWidth="2" />
+             <text x="240" y="30" textAnchor="middle" fill="#475569" fontSize="10">Node B</text>
+
+             {/* Events */}
+             <circle cx="40" cy="60" r="5" fill="#3b82f6" />
+             <text x="20" y="65" textAnchor="end" fill="#1e40af" fontSize="10">[1, 0]</text>
+             
+             <path d="M40,60 L240,90" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#arrow)" />
+             
+             <circle cx="240" cy="90" r="5" fill="#22c55e" />
+             <text x="260" y="95" textAnchor="start" fill="#166534" fontSize="10">[1, 1]</text>
+             
+             <circle cx="240" cy="120" r="5" fill="#22c55e" />
+             <text x="260" y="125" textAnchor="start" fill="#166534" fontSize="10">[1, 2]</text>
+
+             <path d="M240,120 L40,150" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#arrow)" />
+
+             <circle cx="40" cy="150" r="5" fill="#3b82f6" />
+             <text x="20" y="155" textAnchor="end" fill="#1e40af" fontSize="10">[2, 2]</text>
+          </svg>
+        ),
+        'split-brain': (
+           <svg width="280" height="200" viewBox="0 0 280 200">
+             <rect x="20" y="40" width="100" height="120" rx="8" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,5" />
+             <rect x="160" y="40" width="100" height="120" rx="8" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,5" />
+             
+             <path d="M140,20 L140,180" stroke="#ef4444" strokeWidth="4" />
+             <text x="140" y="195" textAnchor="middle" fill="#ef4444" fontSize="12" fontWeight="bold">Network Partition</text>
+
+             <circle cx="70" cy="80" r="15" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+             <text x="70" y="85" textAnchor="middle" fill="#92400e" fontSize="8" fontWeight="bold">Master?</text>
+
+             <circle cx="210" cy="80" r="15" fill="#fcd34d" stroke="#d97706" strokeWidth="2" />
+             <text x="210" y="85" textAnchor="middle" fill="#92400e" fontSize="8" fontWeight="bold">Master?</text>
+
+             <circle cx="50" cy="130" r="10" fill="#bfdbfe" stroke="#3b82f6" />
+             <circle cx="90" cy="130" r="10" fill="#bfdbfe" stroke="#3b82f6" />
+
+             <circle cx="190" cy="130" r="10" fill="#bfdbfe" stroke="#3b82f6" />
+             <circle cx="230" cy="130" r="10" fill="#bfdbfe" stroke="#3b82f6" />
+             
+             <text x="70" y="155" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold">Write A</text>
+             <text x="210" y="155" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold">Write B</text>
+             
+             <text x="140" y="100" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold" transform="rotate(-90, 140, 100)">BROKEN</text>
+           </svg>
+        )
+    };
+
+    return (
+      <div className="w-full bg-gray-50 rounded-lg p-4 overflow-auto" style={{ height: 'calc(100vh - 200px)' }}>
+          <h3 className="text-lg font-bold mb-4 text-center">Distributed Systems Concepts</h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            {distributedSystems.concepts.map(c => (
+              <div 
+                key={c.id}
+                className={`p-3 flex items-center justify-center rounded-lg cursor-pointer transition-all ${
+                  selectedId === c.id 
+                    ? 'bg-blue-100 border-2 border-blue-500' 
+                    : 'bg-white border border-gray-200 hover:border-blue-300'
+                }`}
+                onClick={() => setSelectedId(c.id)}
+              >
+                <span className="mr-2">{getIcon(c.icon)}</span>
+                <span className="font-medium text-xs md:text-sm">{c.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                   <h4 className="text-xl font-bold text-blue-700 mb-3">{concept.name}</h4>
+                   <p className="text-gray-700 mb-4">{concept.description}</p>
+                   
+                   {concept.details && (
+                      <ul className="list-disc pl-5 space-y-1 text-gray-600 mb-4">
+                        {concept.details.map((d, i) => <li key={i}>{d}</li>)}
+                      </ul>
+                   )}
+
+                   {concept.types && (
+                     <div className="mb-4">
+                       <h5 className="font-semibold text-gray-700 mb-2">Types:</h5>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                          {concept.types.map((t, i) => (
+                              <li key={i}><strong>{t.name}:</strong> {t.desc}</li>
+                          ))}
+                        </ul>
+                     </div>
+                   )}
+
+                   <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+                      <h5 className="font-semibold text-gray-700 mb-1 text-xs uppercase">Example:</h5>
+                      <p className="text-gray-600 text-sm">{concept.example}</p>
+                   </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center bg-gray-50 rounded p-4 border border-gray-100">
+                   {dsDiagrams[selectedId] || <div className="text-gray-400">Diagram coming soon</div>}
+                </div>
+             </div>
+          </div>
+      </div>
+    );
+  };
+
   const allDiagrams = [
       { id: 'architecture-patterns', name: 'Architecture' },
       { id: 'networking', name: 'Networking' },
       { id: 'scalability', name: 'Scalability' },
       { id: 'databases', name: 'Databases' },
       { id: 'caching', name: 'Caching' },
-      { id: 'api-design', name: 'API Design' }
+      { id: 'api-design', name: 'API Design' },
+      { id: 'messaging', name: 'Messaging & Streaming' },
+      { id: 'distributed-systems', name: 'Distributed Systems' },
+      { id: 'end-to-end', name: 'End-to-End Flow' }
   ];
 
   const renderDiagram = () => {
     switch(activeDiagram) {
       case 'architecture-patterns': return <ArchitecturePatternsDiagram />;
+      case 'messaging': return <MessagingDiagram />;
       case 'networking': return <NetworkingDiagram />;
       case 'scalability': return <ScalabilityDiagram />;
       case 'databases': return <DatabasesDiagram />;
       case 'caching': return <CachingDiagram />;
       case 'api-design': return <ApiDesignDiagram />;
+      case 'distributed-systems': return <DistributedSystemsDiagram />;
+      case 'end-to-end': return <EndToEndDiagram />;
       default: return <ArchitecturePatternsDiagram />;
     }
   };
