@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from "react";
 import {
   AlignJustify,
@@ -1455,11 +1456,14 @@ CROSS JOIN Categories;`,
           menuOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 fixed md:static h-full`}
       >
-        <div className="p-4 border-b">
-          <h1 className="text-xl font-bold text-blue-700">Dev Visuals</h1>
-          <p className="text-xs text-gray-500">
-            Visual Programming Cheatsheets
-          </p>
+        <div className="p-4 border-b flex items-center space-x-3">
+          <img src="/logo.svg" alt="Dev Visuals Logo" className="w-8 h-8" />
+          <div>
+            <h1 className="text-xl font-bold text-blue-700">Dev Visuals</h1>
+            <p className="text-xs text-gray-500">
+              Visual Programming Cheatsheets
+            </p>
+          </div>
         </div>
 
         <div className="p-3">

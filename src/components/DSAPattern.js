@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Code, ListChecks, Puzzle, Layers } from 'lucide-react';
 

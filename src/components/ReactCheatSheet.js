@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Code, ArrowRight, GitBranch, Repeat, Clock, Zap } from 'lucide-react';
 

@@ -1,0 +1,552 @@
+{
+    "systemDesign": {
+        "diagrams": [
+            {
+                "id": "architecture-patterns",
+                "name": "Architecture Patterns"
+            },
+            {
+                "id": "scalability",
+                "name": "Scalability"
+            },
+            {
+                "id": "databases",
+                "name": "Databases"
+            },
+            {
+                "id": "caching",
+                "name": "Caching"
+            },
+            {
+                "id": "api-design",
+                "name": "API Design"
+            }
+        ],
+        "architecturePatterns": [
+            {
+                "id": "monolithic",
+                "name": "Monolithic",
+                "icon": "HardDrive",
+                "description": "A single, unified codebase where all components and modules are combined into one application.",
+                "advantages": [
+                    "Simple development and deployment",
+                    "Easier testing and debugging",
+                    "Good performance for small applications",
+                    "Simpler team structure initially"
+                ],
+                "disadvantages": [
+                    "Difficult to scale individual components",
+                    "Technology stack tied to initial choices",
+                    "Larger codebases get unwieldy over time",
+                    "Continuous deployment becomes challenging"
+                ],
+                "example": "Traditional enterprise applications like older banking systems, internal corporate tools, or simple CRUD applications."
+            },
+            {
+                "id": "microservices",
+                "name": "Microservices",
+                "icon": "Layers",
+                "description": "An architectural approach where an application is built as a collection of small, independently deployable services.",
+                "advantages": [
+                    "Independent scaling of services",
+                    "Technology diversity across services",
+                    "Resilience (failure isolation)",
+                    "Easier continuous deployment",
+                    "Teams can develop independently"
+                ],
+                "disadvantages": [
+                    "Increased operational complexity",
+                    "Network latency between services",
+                    "Debugging across services is challenging",
+                    "Data consistency challenges",
+                    "Higher infrastructure costs"
+                ],
+                "example": "Modern distributed systems like Netflix, Uber, or Amazon's retail platform where different teams own different services."
+            },
+            {
+                "id": "serverless",
+                "name": "Serverless",
+                "icon": "Clock",
+                "description": "A cloud computing execution model where the cloud provider dynamically manages the allocation of resources.",
+                "advantages": [
+                    "Zero infrastructure management",
+                    "Pay-per-use pricing model",
+                    "Automatic scaling",
+                    "Faster time to market",
+                    "Focus on code, not infrastructure"
+                ],
+                "disadvantages": [
+                    "Cold start latency",
+                    "Limited execution duration",
+                    "Vendor lock-in concerns",
+                    "Limited local testing",
+                    "Complex debugging"
+                ],
+                "example": "AWS Lambda functions for image processing, API Gateway backends, or event-triggered workflows like form submissions or IoT events."
+            },
+            {
+                "id": "eventdriven",
+                "name": "Event-Driven",
+                "icon": "BarChart",
+                "description": "A design pattern where the flow of the program is determined by events like user actions, sensor outputs, or messages from other programs.",
+                "advantages": [
+                    "Loose coupling between components",
+                    "Good for asynchronous workflows",
+                    "Highly scalable and reactive",
+                    "Better fault isolation",
+                    "Easy to extend with new event handlers"
+                ],
+                "disadvantages": [
+                    "Complex event flows can be hard to debug",
+                    "Event versioning challenges",
+                    "Eventual consistency complexities",
+                    "Potentially higher latency",
+                    "Ordering guarantees may be difficult"
+                ],
+                "example": "IoT systems, real-time analytics platforms, or financial trading platforms where events trigger specific actions or workflows."
+            }
+        ],
+        "networking": {
+            "diagrams": [
+                {
+                    "id": "dns",
+                    "name": "DNS",
+                    "icon": "Globe"
+                },
+                {
+                    "id": "tcp-udp",
+                    "name": "TCP vs UDP",
+                    "icon": "ArrowLeftRight"
+                },
+                {
+                    "id": "http-https",
+                    "name": "HTTP vs HTTPS",
+                    "icon": "Lock"
+                },
+                {
+                    "id": "tls-ssl",
+                    "name": "TLS/SSL",
+                    "icon": "ShieldCheck"
+                },
+                {
+                    "id": "websockets",
+                    "name": "WebSockets",
+                    "icon": "RefreshCw"
+                },
+                {
+                    "id": "grpc",
+                    "name": "gRPC",
+                    "icon": "Zap"
+                },
+                {
+                    "id": "forward-reverse-proxy",
+                    "name": "Forward vs Reverse Proxy",
+                    "icon": "ArrowLeftRight"
+                }
+            ],
+            "concepts": {
+                "dns": {
+                    "title": "DNS (Domain Name System)",
+                    "description": "The phonebook of the internet. Translates human-readable domain names (google.com) to IP addresses (142.250.190.46).",
+                    "details": [
+                        "Recursive Query: Resolver asks Root -> TLD -> Authoritative servers.",
+                        "Iterative Query: Resolver refers client to next server.",
+                        "A Record: IPv4 address.",
+                        "AAAA Record: IPv6 address.",
+                        "CNAME: Alias to another domain.",
+                        "TTL: Time To Live (caching duration)."
+                    ]
+                },
+                "tcp-udp": {
+                    "title": "TCP vs UDP",
+                    "description": "Transport Layer protocols that determine how data is sent over the network.",
+                    "comparison": [
+                        {
+                            "feature": "Connection",
+                            "tcp": "Connection-oriented (Handshake)",
+                            "udp": "Connectionless (Fire & Forget)"
+                        },
+                        {
+                            "feature": "Reliability",
+                            "tcp": "Guaranteed delivery, retries",
+                            "udp": "No guarantee, packet loss ok"
+                        },
+                        {
+                            "feature": "Ordering",
+                            "tcp": "Ordered packets",
+                            "udp": "Unordered"
+                        },
+                        {
+                            "feature": "Speed",
+                            "tcp": "Slower (overhead)",
+                            "udp": "Faster (low overhead)"
+                        },
+                        {
+                            "feature": "Use Cases",
+                            "tcp": "Web, Email, File Transfer",
+                            "udp": "Streaming, Gaming, VoIP"
+                        }
+                    ]
+                },
+                "http-https": {
+                    "title": "HTTP vs HTTPS",
+                    "description": "HyperText Transfer Protocol. HTTPS adds a layer of security (TLS/SSL) to encrypt communications.",
+                    "features": [
+                        "HTTP: Plain text, port 80, fast but insecure.",
+                        "HTTPS: Encrypted, port 443, authenticates server, ensures integrity."
+                    ]
+                },
+                "tls-ssl": {
+                    "title": "TLS/SSL Handshake",
+                    "description": "Transport Layer Security. The process of negotiating encryption keys between client and server.",
+                    "steps": [
+                        "1. Client Hello: Cipher suites, random bytes.",
+                        "2. Server Hello: Selected cipher, certificate, random bytes.",
+                        "3. Authentication: Client verifies server certificate.",
+                        "4. Key Exchange: Generate session keys (Pre-master secret).",
+                        "5. Finished: Encrypted communication begins."
+                    ]
+                },
+                "websockets": {
+                    "title": "WebSockets",
+                    "description": "Protocol for full-duplex communication channels over a single TCP connection.",
+                    "benefits": [
+                        "Real-time data transfer.",
+                        "Low latency (no polling overhead).",
+                        "Persistent connection.",
+                        "Ideal for chat apps, live feeds, collaborative editing."
+                    ]
+                },
+                "grpc": {
+                    "title": "gRPC",
+                    "description": "Modern open source high performance Remote Procedure Call (RPC) framework.",
+                    "features": [
+                        "Built on HTTP/2 (multiplexing, binary framing).",
+                        "Uses Protocol Buffers (smaller, faster than JSON).",
+                        "Supports bidirectional streaming."
+                    ]
+                },
+                "forward-reverse-proxy": {
+                    "title": "Forward vs Reverse Proxy",
+                    "description": "Proxies act as intermediaries. The key difference is 'who' they represent.",
+                    "comparison": [
+                        {
+                            "feature": "Represents",
+                            "forward": "Client (User)",
+                            "reverse": "Server (Backend)"
+                        },
+                        {
+                            "feature": "Position",
+                            "forward": "User -> Proxy -> Internet",
+                            "reverse": "Internet -> Proxy -> Server"
+                        },
+                        {
+                            "feature": "Primary Goal",
+                            "forward": "Anonymity, Bypassing restrictions",
+                            "reverse": "Load Balancing, Security, Caching"
+                        },
+                        {
+                            "feature": "Visibility",
+                            "forward": "Server doesn't know real Client IP",
+                            "reverse": "Client doesn't know real Server IP"
+                        }
+                    ]
+                }
+            }
+        },
+        "scalabilityConcepts": [
+            {
+                "id": "vertical-scaling",
+                "name": "Vertical Scaling",
+                "icon": "BarChart",
+                "description": "Scaling up (scaling vertically) means adding more resources (CPU/RAM) to your existing server.",
+                "pros": [
+                    "Simple to implement",
+                    "No code changes required",
+                    "Lower administrative overhead"
+                ],
+                "cons": [
+                    "Hardware limits (finite ceiling)",
+                    "Single point of failure",
+                    "Can be expensive at high end"
+                ]
+            },
+            {
+                "id": "horizontal-scaling",
+                "name": "Horizontal Scaling",
+                "icon": "Layers",
+                "description": "Scaling out (scaling horizontally) means adding more servers to your pool of resources.",
+                "pros": [
+                    "Ideally infinite scale",
+                    "Redundancy/Failover",
+                    "Cost-effective with commodity hardware"
+                ],
+                "cons": [
+                    "Complex (needs load balancing)",
+                    "Network latency",
+                    "Data consistency challenges"
+                ]
+            },
+            {
+                "id": "load-balancing",
+                "name": "Load Balancing",
+                "icon": "Globe",
+                "description": "Distributes incoming network traffic across a group of backend servers.",
+                "pros": [
+                    "Prevents overload",
+                    "High availability",
+                    "Flexibility to add/remove servers"
+                ],
+                "cons": [
+                    "Can be a bottleneck",
+                    "Complexity in configuration",
+                    "Session persistence issues"
+                ],
+                "types": [
+                    {
+                        "name": "L4 (Transport)",
+                        "desc": "Routes based on IP/Port. Fast, simple. No content inspection."
+                    },
+                    {
+                        "name": "L7 (Application)",
+                        "desc": "Routes based on URL, Headers, Content. Smarter, but slower (CPU intensive)."
+                    }
+                ]
+            },
+            {
+                "id": "reverse-proxy",
+                "name": "Reverse Proxy",
+                "icon": "ArrowLeftRight",
+                "description": "A server that sits in front of web servers and forwards client requests to those web servers.",
+                "pros": [
+                    "Security (hides backend IPs)",
+                    "SSL Termination",
+                    "Caching & Compression",
+                    "Load Balancing"
+                ],
+                "cons": [
+                    "Single point of failure (if not redundant)",
+                    "Added complexity",
+                    "Potential bottleneck"
+                ]
+            },
+            {
+                "id": "cdn",
+                "name": "CDN",
+                "icon": "Globe",
+                "description": "Content Delivery Network. Geographically distributed servers that cache content close to users.",
+                "pros": [
+                    "Lower latency (faster load times)",
+                    "Reduced bandwidth costs",
+                    "DDoS protection",
+                    "High availability"
+                ],
+                "cons": [
+                    "Cache invalidation challenges",
+                    "Cost for high traffic",
+                    "Restricted to static content (mostly)"
+                ]
+            }
+        ],
+        "databases": {
+            "tabs": [
+                {
+                    "id": "sql-vs-nosql",
+                    "name": "SQL vs NoSQL"
+                },
+                {
+                    "id": "cap",
+                    "name": "CAP Theorem"
+                },
+                {
+                    "id": "sharding",
+                    "name": "Replication & Sharding"
+                }
+            ],
+            "sql": {
+                "title": "SQL (Relational)",
+                "items": [
+                    "Structured data, predefined schema",
+                    "ACID transactions (Atomicity, Consistency, Isolation, Durability)",
+                    "Vertical scaling is common",
+                    "Good for complex queries (Joins)"
+                ],
+                "icon": "Database",
+                "examples": "PostgreSQL, MySQL"
+            },
+            "nosql": {
+                "title": "NoSQL (Non-Relational)",
+                "items": [
+                    "Unstructured/Semi-structured data",
+                    "BASE (Basically Available, Soft state, Eventual consistency)",
+                    "Horizontal scaling is easier",
+                    "Flexible schema"
+                ],
+                "icon": "FileCode",
+                "examples": "MongoDB, Redis, Cassandra"
+            },
+            "cap": {
+                "title": "CAP Theorem",
+                "description": "In a distributed system, you can only satisfy two of the three guarantees at the same time: Consistency, Availability, Partition Tolerance.",
+                "note": "* Partition Tolerance is usually non-negotiable in distributed systems, so the choice is typically between CP (Consistency/Partition Tolerance) and AP (Availability/Partition Tolerance)."
+            },
+            "replication": {
+                "title": "Replication",
+                "description": "Duplicating data across multiple servers.",
+                "items": [
+                    "Increases availability (failover)",
+                    "Improves read performance (read replicas)",
+                    "Master-Slave vs Master-Master"
+                ]
+            },
+            "sharding": {
+                "title": "Sharding",
+                "description": "Partitioning data across multiple servers.",
+                "items": [
+                    "Horizontal scaling for data",
+                    "Complex queries become harder",
+                    "Uses a Shard Key (e.g. UserID)"
+                ]
+            }
+        },
+        "caching": {
+            "layers": {
+                "title": "Caching Layers",
+                "items": [
+                    {
+                        "name": "Client",
+                        "desc": "Browser/App Cache"
+                    },
+                    {
+                        "name": "CDN",
+                        "desc": "Edge Caching"
+                    },
+                    {
+                        "name": "App Server",
+                        "desc": "Local Cache"
+                    },
+                    {
+                        "name": "Distributed",
+                        "desc": "Redis/Memcached"
+                    }
+                ]
+            },
+            "evictionPolicies": {
+                "title": "Eviction Policies",
+                "items": [
+                    {
+                        "name": "LRU (Least Recently Used)",
+                        "desc": "Discards the least recently used items first. Good for most general use cases."
+                    },
+                    {
+                        "name": "LFU (Least Frequently Used)",
+                        "desc": "Counts how often an item is needed. Good if some items are accessed much more often than others."
+                    },
+                    {
+                        "name": "FIFO (First In First Out)",
+                        "desc": "Discards items in the order they were added."
+                    }
+                ]
+            },
+            "writeStrategies": {
+                "title": "Writes Strategies",
+                "items": [
+                    {
+                        "name": "Write-Through",
+                        "desc": "Write to cache and DB at the same time. Safe but slower write."
+                    },
+                    {
+                        "name": "Write-Around",
+                        "desc": "Write to DB, bypass cache. detailed read fills cache. Reduces cache pollution."
+                    },
+                    {
+                        "name": "Write-Back",
+                        "desc": "Write to cache, async write to DB. Fast logical write, risk of data loss on crash."
+                    }
+                ]
+            }
+        },
+        "apiDesign": {
+            "styles": [
+                {
+                    "title": "REST",
+                    "subtitle": "Representational State Transfer",
+                    "items": [
+                        "Resource-based (nouns)",
+                        "Standard HTTP methods (GET, POST...)",
+                        "Stateless",
+                        "Great for public APIs"
+                    ],
+                    "color": "blue"
+                },
+                {
+                    "title": "GraphQL",
+                    "subtitle": "Query Language for APIs",
+                    "items": [
+                        "Client requests exactly what it needs",
+                        "Single endpoint",
+                        "Solves over/under-fetching",
+                        "Complex backend implementation"
+                    ],
+                    "color": "pink"
+                },
+                {
+                    "title": "gRPC",
+                    "subtitle": "Remote Procedure Call",
+                    "items": [
+                        "Uses Protocol Buffers (fast)",
+                        "Strictly typed",
+                        "Great for internal microservices",
+                        "Requires code generation"
+                    ],
+                    "color": "green"
+                }
+            ],
+            "statusCodes": {
+                "title": "Common HTTP Status Codes",
+                "items": [
+                    {
+                        "code": "200",
+                        "desc": "OK",
+                        "type": "success"
+                    },
+                    {
+                        "code": "201",
+                        "desc": "Created",
+                        "type": "success"
+                    },
+                    {
+                        "code": "400",
+                        "desc": "Bad Request",
+                        "type": "warning"
+                    },
+                    {
+                        "code": "401",
+                        "desc": "Unauthorized",
+                        "type": "warning"
+                    },
+                    {
+                        "code": "403",
+                        "desc": "Forbidden",
+                        "type": "warning"
+                    },
+                    {
+                        "code": "404",
+                        "desc": "Not Found",
+                        "type": "warning"
+                    },
+                    {
+                        "code": "500",
+                        "desc": "Server Error",
+                        "type": "error"
+                    },
+                    {
+                        "code": "502",
+                        "desc": "Bad Gateway",
+                        "type": "error"
+                    }
+                ]
+            }
+        }
+    }
+}
