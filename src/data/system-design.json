@@ -20,6 +20,14 @@
             {
                 "id": "api-design",
                 "name": "API Design"
+            },
+            {
+                "id": "communication",
+                "name": "Communication"
+            },
+            {
+                "id": "frontend-system-design",
+                "name": "Frontend System Design"
             }
         ],
         "architecturePatterns": [
@@ -761,6 +769,73 @@
                         "STONITH (Shoot The Other Node In The Head)."
                     ],
                     "example": "Elasticsearch cluster partition, Database failover gone wrong."
+                }
+            ]
+        },
+        "communication": {
+            "patterns": [
+                {
+                    "id": "polling",
+                    "name": "Short Polling",
+                    "icon": "RefreshCw",
+                    "description": "The client repeatedly sends requests to the server at fixed intervals to check for new data.",
+                    "pros": [
+                        "Simple to implement",
+                        "Good for less frequent updates"
+                    ],
+                    "cons": [
+                        "Wasted resources (empty checks)",
+                        "High latency (wait for next poll)",
+                        "Server load"
+                    ],
+                    "example": "Dashboard refreshing every 10 seconds."
+                },
+                {
+                    "id": "long-polling",
+                    "name": "Long Polling",
+                    "icon": "Clock",
+                    "description": "The client sends a request, and the server holds it open until new data is available or a timeout occurs.",
+                    "pros": [
+                        "Better than short polling for real-time",
+                        "Works over standard HTTP"
+                    ],
+                    "cons": [
+                        "Server must manage open connections",
+                        "Request/Response overhead still exists"
+                    ],
+                    "example": "Chat applications (before WebSockets), Notification updates."
+                },
+                {
+                    "id": "websockets",
+                    "name": "WebSockets",
+                    "icon": "ArrowLeftRight",
+                    "description": "A persistent, full-duplex communication channel over a single TCP connection.",
+                    "pros": [
+                        "True real-time (low latency)",
+                        "Bi-directional (Server can push)",
+                        "Low overhead header"
+                    ],
+                    "cons": [
+                        "Connection state management",
+                        "Load balancing is trickier (sticky sessions)"
+                    ],
+                    "example": "Multiplayer games, Collaborative editing, Stock tickers."
+                },
+                {
+                    "id": "webhooks",
+                    "name": "Webhooks",
+                    "icon": "Zap",
+                    "description": "User-defined HTTP callbacks. The server pushes data to a client's URL when an event occurs.",
+                    "pros": [
+                        "No polling required (Server Push)",
+                        "Efficient for event-driven workflows"
+                    ],
+                    "cons": [
+                        "Client must have a public URL",
+                        "Debugging can be hard (fire and forget)",
+                        "Security (verifying sender)"
+                    ],
+                    "example": "Stripe payment confirmation, GitHub push events, Slack bots."
                 }
             ]
         }

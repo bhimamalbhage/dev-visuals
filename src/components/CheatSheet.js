@@ -8,6 +8,8 @@ import ReactCheatSheet from "./ReactCheatSheet";
 import SystemDesignCheatSheet from "./SystemDesignCheatSheet";
 import DSAPattern from "./DSAPattern";
 import DatabaseOptimizationCheatSheet from "./DatabaseOptimizationCheatSheet";
+import FrontendSystemDesignCheatSheet from "./FrontendSystemDesignCheatSheet";
+import CachingCheatSheet from "./CachingCheatSheet";
 
 const CheatSheet = () => {
   const [selectedTopic, setSelectedTopic] = useState("system-design");
@@ -59,8 +61,12 @@ const CheatSheet = () => {
         return <DSAPattern />;
       case "system-design":
         return <SystemDesignCheatSheet />;
+      case "frontend-system-design":
+        return <FrontendSystemDesignCheatSheet />;
       case "db-optimization":
         return <DatabaseOptimizationCheatSheet />;
+      case "caching":
+        return <CachingCheatSheet />;
       default:
         return <div className="p-10 text-center text-slate-500">Select a topic from the sidebar</div>;
     }
@@ -71,7 +77,9 @@ const CheatSheet = () => {
     react: "React.js Ecosystem",
     dsa: "Data Structures & Algorithms",
     "system-design": "System Design Architecture",
+    "frontend-system-design": "Frontend System Design",
     "db-optimization": "Database Optimization Guide",
+    caching: "Redis & Caching Strategies",
   };
 
   return (

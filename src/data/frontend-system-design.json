@@ -1,0 +1,114 @@
+{
+    "frontendSystemDesign": {
+        "concepts": [
+            {
+                "id": "rendering-patterns",
+                "name": "Rendering Patterns",
+                "icon": "FileCode",
+                "description": "Strategies for rendering web content to the user.",
+                "types": [
+                    {
+                        "name": "CSR (Client-Side Rendering)",
+                        "desc": "Browser downloads minimal HTML + JS. JS fetches data and builds UI. Slow initial load, fast interactions."
+                    },
+                    {
+                        "name": "SSR (Server-Side Rendering)",
+                        "desc": "Server generates full HTML per request. Fast First Contentful Paint (FCP), good for SEO. Higher server load."
+                    },
+                    {
+                        "name": "SSG (Static Site Generation)",
+                        "desc": "HTML builds at build-time. Fastest load, but content can be stale until rebuild."
+                    },
+                    {
+                        "name": "ISR (Incremental Static Regeneration)",
+                        "desc": "Updates static pages after deployment in the background as traffic comes in."
+                    }
+                ]
+            },
+            {
+                "id": "state-management",
+                "name": "State Management",
+                "icon": "Database",
+                "description": "Handling the state of the application across components.",
+                "types": [
+                    {
+                        "name": "Local State",
+                        "desc": "useState/useReducer. Co-located with component."
+                    },
+                    {
+                        "name": "Global State",
+                        "desc": "Redux/Zustand/Context. Shared across app. Avoid prop drilling."
+                    },
+                    {
+                        "name": "Server State",
+                        "desc": "React Query/SWR. Caching, fetching, synchronizing with server."
+                    },
+                    {
+                        "name": "URL State",
+                        "desc": "Storing filter/sort params in URL. Shareable, bookmarkable."
+                    }
+                ]
+            },
+            {
+                "id": "performance",
+                "name": "Performance",
+                "icon": "Zap",
+                "description": "Optimizing the speed and user experience of the application.",
+                "strategies": [
+                    {
+                        "id": "code-splitting",
+                        "title": "Code Splitting & Lazy Loading",
+                        "description": "Splitting the bundle into smaller chunks that are loaded on demand. This reduces the initial bundle size and speeds up the initial load time.",
+                        "impact": "High",
+                        "metric": "LCP",
+                        "example": "import React, { Suspense, lazy } from 'react';\n\n// Lazy load the component\nconst HeavyChart = lazy(() => import('./HeavyChart'));\n\nfunction Dashboard() {\n  return (\n    <div>\n      <h1>Dashboard</h1>\n      {/* Show fallback while loading */}\n      <Suspense fallback={<div>Loading Chart...</div>}>\n        <HeavyChart />\n      </Suspense>\n    </div>\n  );\n}"
+                    },
+                    {
+                        "id": "rendering-optimization",
+                        "title": "Rendering Optimization",
+                        "description": "Preventing unnecessary re-renders using memoization. Crucial when passing callbacks to children or doing heavy calculations.",
+                        "impact": "Medium",
+                        "metric": "TBT",
+                        "example": "import React, { useMemo, useCallback } from 'react';\n\nfunction List({ items, onItemClick }) {\n  // Expensive calculation runs only when items change\n  const sortedItems = useMemo(() => {\n    return sortComplexItems(items);\n  }, [items]);\n\n  // Stable callback reference to prevent child re-renders\n  const handleClick = useCallback((id) => {\n    onItemClick(id);\n  }, [onItemClick]);\n\n  return (\n    <ul>\n      {sortedItems.map(item => (\n        <ListItem key={item.id} onClick={handleClick} />\n      ))}\n    </ul>\n  );\n}"
+                    },
+                    {
+                        "id": "virtualization",
+                        "title": "List Virtualization",
+                        "description": "Rendering only the items currently visible in the viewport. Essential for lists with hundreds or thousands of items to maintain DOM stability.",
+                        "impact": "High",
+                        "metric": "INP",
+                        "example": "import { FixedSizeList as List } from 'react-window';\n\nconst Row = ({ index, style }) => (\n  <div style={style}>Row {index}</div>\n);\n\nfunction VirtualizedList() {\n  return (\n    <List\n      height={400}\n      itemCount={10000}\n      itemSize={35}\n      width={300}\n    >\n      {Row}\n    </List>\n  );\n}"
+                    },
+                    {
+                        "id": "image-optimization",
+                        "title": "Image Optimization",
+                        "description": "Serving images in correct sizes and modern formats (WebP/AVIF). Using techniques like blur-up placeholders and lazy loading.",
+                        "impact": "High",
+                        "metric": "LCP",
+                        "example": "// Using Next.js Image component\nimport Image from 'next/image';\nimport heroImg from '../public/hero.jpg';\n\nfunction Hero() {\n  return (\n    <Image\n      src={heroImg}\n      alt=\"Hero Image\"\n      placeholder=\"blur\" // Show blurred version instantly\n      priority // Preload critical image (LCP)\n      sizes=\"(max-width: 768px) 100vw, 50vw\"\n    />\n  );\n}"
+                    },
+                    {
+                        "id": "debounce-throttle",
+                        "title": "Debouncing & Throttling",
+                        "description": "Limiting the rate at which functions execute. Useful for search inputs (debounce) or scroll listeners (throttle).",
+                        "impact": "Medium",
+                        "metric": "INP",
+                        "example": "import { useState, useMemo } from 'react';\nimport debounce from 'lodash.debounce';\n\nfunction SearchInput({ onSearch }) {\n  const [val, setVal] = useState('');\n\n  // Create a stable debounced version of the search handler\n  const debouncedSearch = useMemo(\n    () => debounce((query) => onSearch(query), 300),\n    [onSearch]\n  );\n\n  const handleChange = (e) => {\n    const value = e.target.value;\n    setVal(value);\n    debouncedSearch(value);\n  };\n\n  return <input value={val} onChange={handleChange} />;\n}"
+                    }
+                ]
+            },
+            {
+                "id": "security",
+                "name": "Security",
+                "icon": "ShieldCheck",
+                "description": "Protecting the frontend application from vulnerabilities.",
+                "details": [
+                    "XSS (Cross-Site Scripting): Sanitize inputs, use Content-Security-Policy.",
+                    "CSRF (Cross-Site Request Forgery): Use SameSite cookies, CSRF tokens.",
+                    "CSP (Content Security Policy): Whitelist trusted sources for scripts/styles.",
+                    "clickjacking: prevent framing with X-Frame-Options."
+                ]
+            }
+        ]
+    }
+}

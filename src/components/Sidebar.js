@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Database, Code, Server, Layout, CheckCircle2 } from 'lucide-react';
+import { Database, Code, Server, Layout, CheckCircle2, Zap } from 'lucide-react';
 
 const Sidebar = ({ activeTab, onTabChange = () => {} }) => {
   const navItems = [
     { id: 'system-design', label: 'System Design', icon: Layout },
+    { id: 'frontend-system-design', label: 'Frontend Design', icon: Layout },
     { id: 'dsa', label: 'DSA Patterns', icon: Server },
     { id: 'react', label: 'React', icon: Code },
     { id: 'sql', label: 'SQL', icon: Database },
     { id: 'db-optimization', label: 'DB Optimization', icon: CheckCircle2 },
+    { id: 'caching', label: 'Caching & Redis', icon: Zap },
   ];
 
   return (

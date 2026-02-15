@@ -1,0 +1,79 @@
+{
+    "caching": {
+        "steps": [
+            {
+                "id": "write-policies",
+                "title": "1. Write Policies",
+                "description": "How the application ensures data consistency between the cache and the database during create/update operations.",
+                "strategies": [
+                    "Cache-Aside (Lazy Loading): App manages cache. Read checks cache first; Write updates DB then invalidates cache.",
+                    "Write-Through: App writes to cache and the cache writes synchronously to DB. Ensure consistency.",
+                    "Write-Behind (Write-Back): App writes to cache and returns immediately. Cache updates DB asynchronously.",
+                    "Read-Through: Cache acts as a proxy. App only talks to cache, cache fetches from DB on miss."
+                ],
+                "example": "Using Write-Behind for high-throughput sensor data where occasional data loss is acceptable for speed."
+            },
+            {
+                "id": "eviction-policies",
+                "title": "2. Eviction Strategies",
+                "description": "When memory is full, the cache must decide what to remove to make space for new items.",
+                "strategies": [
+                    "LRU (Least Recently Used): Discards items not used for the longest time.",
+                    "LFU (Least Frequently Used): Discards items accessed least often.",
+                    "FIFO (First In First Out): Discards oldest items regardless of usage.",
+                    "TTL (Time To Live): Expire keys after a set duration. Critical for cache freshness."
+                ],
+                "example": "Setting `maxmemory-policy allkeys-lru` in Redis to automatically remove old sessions when RAM is exhausted."
+            },
+            {
+                "id": "redis-structures",
+                "title": "3. Redis Structures",
+                "description": "Redis offers more than just string keys. Leveraging the right data structure simplifies application logic.",
+                "strategies": [
+                    "Strings: Basic values, counters (INCR), bitmaps.",
+                    "Hashes: Ideal for objects like User Profiles to access individual fields.",
+                    "Lists: Double-linked lists for timelines or job queues (LPUSH/RPOP).",
+                    "Sets: Unordered unique collections (e.g., specific tags, friends list).",
+                    "Sorted Sets (ZSets): Sets ordered by a score. Perfect for Leaderboards."
+                ],
+                "example": "Using a Sorted Set to store a live leaderboard where user scores update in real-time."
+            },
+            {
+                "id": "cache-hazards",
+                "title": "4. Cache Hazards",
+                "description": "Common pitfalls in distributed caching systems that can cause service outages.",
+                "strategies": [
+                    "Cache Penetration: Queries for non-existent keys bypass cache and hit DB directly. Fix: Bloom Filters.",
+                    "Cache Avalanche: Many keys expire simultaneously, causing massive load on DB. Fix: Add Jitter to TTL.",
+                    "Cache Breakdown (Hot Key): A popular key expires and thundering herd hits DB. Fix: Mutex Locks.",
+                    "Thundering Herd: Many clients waiting for the same cache rehydration."
+                ],
+                "example": "Adding random jitter (e.g., 1-60s) to the expiration time of cached product details to prevent mass expiry."
+            },
+            {
+                "id": "advanced-patterns",
+                "title": "5. Advanced Patterns",
+                "description": "Techniques for scaling and optimizing cache usage in complex systems.",
+                "strategies": [
+                    "N+1 Problem: Avoid fetching related items one by one. Use batching.",
+                    "Cache Stampede: Simultaneous requests for the same missing key.",
+                    "Sizing: Monitor cache hit rates and memory usage to size instances correctly.",
+                    "Partitioning: Sharding data across multiple Redis nodes."
+                ],
+                "example": "Using a distributed lock (Redlock) to ensure only one worker processes a job from the queue."
+            },
+            {
+                "id": "redis-internals",
+                "title": "6. Redis Internals",
+                "description": "Understanding how Redis works under the hood avoids performance bottlenecks and data loss.",
+                "strategies": [
+                    "Single Threaded Event Loop: Redis uses a single thread for all command execution. No locking overhead, but one slow command blocks everyone.",
+                    "I/O Multiplexing: Handles thousands of concurrent connections efficiently using non-blocking I/O (epoll/kqueue).",
+                    "RDB (Snapshot): Periodically saves the dataset to disk. Faster restarts, compact, but potential data loss if crash occurs.",
+                    "AOF (Append Only File): Logs every write operation. More durable, slower restarts, larger files."
+                ],
+                "example": "Running 'KEYS *' on a production Redis instance will block the single thread and freeze the entire application until it finishes."
+            }
+        ]
+    }
+}

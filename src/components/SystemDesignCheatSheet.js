@@ -1040,6 +1040,8 @@ const SystemDesignCheatSheet = () => {
     );
   };
 
+
+
   const EndToEndDiagram = () => {
     return (
       <div className="w-full bg-gray-50 rounded-lg p-4 overflow-auto" style={{ height: 'calc(100vh - 200px)' }}>
@@ -1483,6 +1485,162 @@ const SystemDesignCheatSheet = () => {
     );
   };
 
+  const CommunicationDiagram = () => {
+    const [selectedPattern, setSelectedPattern] = useState('polling');
+    const { communication } = systemDesignData.systemDesign;
+
+    const communicationDiagrams = {
+        polling: (
+            <svg width="280" height="200" viewBox="0 0 280 200">
+                <rect x="20" y="40" width="60" height="120" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                <text x="50" y="30" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Client</text>
+                
+                <rect x="200" y="40" width="60" height="120" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+                <text x="230" y="30" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Server</text>
+
+                <path d="M80,50 L200,50" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="45" textAnchor="middle" fill="#475569" fontSize="8">Request?</text>
+                <path d="M200,60 L80,60" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="70" textAnchor="middle" fill="#475569" fontSize="8">No Data</text>
+
+                <path d="M80,90 L200,90" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="85" textAnchor="middle" fill="#475569" fontSize="8">Request?</text>
+                <path d="M200,100 L80,100" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="110" textAnchor="middle" fill="#475569" fontSize="8">No Data</text>
+
+                <path d="M80,130 L200,130" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="125" textAnchor="middle" fill="#475569" fontSize="8">Request?</text>
+                <path d="M200,140 L80,140" stroke="#22c55e" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                <text x="140" y="150" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">Data!</text>
+            </svg>
+        ),
+        'long-polling': (
+            <svg width="280" height="200" viewBox="0 0 280 200">
+                <rect x="20" y="40" width="60" height="120" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                <text x="50" y="30" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Client</text>
+                
+                <rect x="200" y="40" width="60" height="120" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+                <text x="230" y="30" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Server</text>
+
+                <path d="M80,60 L200,60" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="55" textAnchor="middle" fill="#475569" fontSize="8">Request (Holds)</text>
+                
+                <rect x="210" y="70" width="40" height="40" rx="4" fill="#fef3c7" stroke="#d97706" strokeWidth="1" />
+                <text x="230" y="90" textAnchor="middle" fill="#92400e" fontSize="8">Wait...</text>
+                
+                <path d="M200,120 L80,120" stroke="#22c55e" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                <text x="140" y="115" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">Response (Data)</text>
+
+                <path d="M80,140 L200,140" stroke="#64748b" strokeWidth="1" markerEnd="url(#arrow)" />
+                <text x="140" y="135" textAnchor="middle" fill="#475569" fontSize="8">New Request</text>
+            </svg>
+        ),
+        'websockets': (
+            <svg width="280" height="200" viewBox="0 0 280 200">
+                <rect x="20" y="40" width="60" height="120" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                <text x="50" y="30" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Client</text>
+                
+                <rect x="200" y="40" width="60" height="120" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+                <text x="230" y="30" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Server</text>
+
+                <path d="M80,60 L200,60" stroke="#64748b" strokeWidth="2" />
+                <path d="M80,140 L200,140" stroke="#64748b" strokeWidth="2" />
+                
+                <circle cx="140" cy="60" r="4" fill="#22c55e" />
+                <circle cx="140" cy="140" r="4" fill="#22c55e" />
+                
+                <text x="140" y="80" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Persistant Connection</text>
+
+                <path d="M100,90 L180,90" stroke="#3b82f6" strokeWidth="1" markerEnd="url(#arrow)" />
+                <path d="M180,110 L100,110" stroke="#22c55e" strokeWidth="1" markerEnd="url(#arrow)" />
+                
+                <text x="140" y="100" textAnchor="middle" fill="#475569" fontSize="8">Full Duplex (Push/Pull)</text>
+            </svg>
+        ),
+        'webhooks': (
+             <svg width="280" height="200" viewBox="0 0 280 200">
+                <rect x="20" y="40" width="60" height="60" rx="4" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
+                <text x="50" y="30" textAnchor="middle" fill="#1e40af" fontSize="10" fontWeight="bold">Client App</text>
+                <text x="50" y="70" textAnchor="middle" fill="#1e40af" fontSize="8">Endpoint</text>
+
+                <rect x="200" y="40" width="60" height="120" rx="4" fill="#bbf7d0" stroke="#22c55e" strokeWidth="2" />
+                <text x="230" y="30" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">Provider</text>
+                <text x="230" y="70" textAnchor="middle" fill="#166534" fontSize="8">(Stripe/GitHub)</text>
+
+                <rect x="210" y="90" width="40" height="40" rx="4" fill="#fca5a5" stroke="#ef4444" strokeWidth="1" />
+                <text x="230" y="115" textAnchor="middle" fill="#7f1d1d" fontSize="10" fontWeight="bold">Event!</text>
+
+                <path d="M200,100 L120,50 L80,50" stroke="#ef4444" strokeWidth="1.5" markerEnd="url(#arrow)" />
+                <text x="140" y="45" textAnchor="middle" fill="#991b1b" fontSize="8" fontWeight="bold">HTTP POST (Payload)</text>
+            </svg>
+        )
+    };
+
+    return (
+      <div className="w-full bg-gray-50 rounded-lg p-4 overflow-auto" style={{ height: 'calc(100vh - 200px)' }}>
+        <h3 className="text-lg font-bold mb-6 text-center">Communication Patterns</h3>
+        
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          {communication.patterns.map(pattern => (
+            <div 
+              key={pattern.id}
+              className={`p-3 flex items-center justify-center rounded-lg cursor-pointer transition-all ${
+                selectedPattern === pattern.id 
+                  ? 'bg-blue-100 border-2 border-blue-500' 
+                  : 'bg-white border border-gray-200 hover:border-blue-300'
+              }`}
+              onClick={() => setSelectedPattern(pattern.id)}
+            >
+              <span className="mr-2">{getIcon(pattern.icon)}</span>
+              <span className="font-medium text-sm">{pattern.name}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+               <h4 className="text-xl font-bold text-blue-700 mb-3">
+                {communication.patterns.find(p => p.id === selectedPattern)?.name}
+               </h4>
+               <p className="text-gray-700 mb-4">
+                 {communication.patterns.find(p => p.id === selectedPattern)?.description}
+               </p>
+               
+               <div className="mb-4">
+                 <h5 className="font-semibold text-green-700 mb-2">Pros:</h5>
+                 <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                    {communication.patterns.find(p => p.id === selectedPattern)?.pros.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                 </ul>
+               </div>
+
+               <div>
+                 <h5 className="font-semibold text-red-700 mb-2">Cons:</h5>
+                 <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                    {communication.patterns.find(p => p.id === selectedPattern)?.cons.map((c, i) => (
+                      <li key={i}>{c}</li>
+                    ))}
+                 </ul>
+               </div>
+
+                <div className="mt-4 bg-gray-50 p-3 rounded border">
+                    <h5 className="font-semibold text-gray-700 mb-1">Example:</h5>
+                    <p className="text-gray-600 text-sm">
+                        {communication.patterns.find(p => p.id === selectedPattern)?.example}
+                    </p>
+                </div>
+            </div>
+            <div className="flex flex-col items-center justify-center bg-gray-50 rounded p-4">
+              {communicationDiagrams[selectedPattern]}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const allDiagrams = [
       { id: 'architecture-patterns', name: 'Architecture' },
       { id: 'networking', name: 'Networking' },
@@ -1492,6 +1650,7 @@ const SystemDesignCheatSheet = () => {
       { id: 'api-design', name: 'API Design' },
       { id: 'messaging', name: 'Messaging & Streaming' },
       { id: 'distributed-systems', name: 'Distributed Systems' },
+      { id: 'communication', name: 'Communication' },
       { id: 'end-to-end', name: 'End-to-End Flow' }
   ];
 
@@ -1505,6 +1664,7 @@ const SystemDesignCheatSheet = () => {
       case 'caching': return <CachingDiagram />;
       case 'api-design': return <ApiDesignDiagram />;
       case 'distributed-systems': return <DistributedSystemsDiagram />;
+      case 'communication': return <CommunicationDiagram />;
       case 'end-to-end': return <EndToEndDiagram />;
       default: return <ArchitecturePatternsDiagram />;
     }
