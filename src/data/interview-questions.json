@@ -1,0 +1,1338 @@
+{
+    "interviewQuestions": {
+        "categories": [
+            {
+                "id": "networking-dns",
+                "name": "Networking & DNS",
+                "icon": "Globe",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What happens when you type a URL in the browser and hit Enter?",
+                            "hint": "DNS lookup → TCP handshake → TLS (if HTTPS) → HTTP request → Server processes → Response → Browser renders. Cover each step: browser cache, OS cache, recursive DNS resolver, root → TLD → authoritative nameserver, IP resolution, then the full HTTP lifecycle.",
+                            "tags": [
+                                "DNS",
+                                "HTTP",
+                                "TCP",
+                                "Rendering"
+                            ]
+                        },
+                        {
+                            "question": "What is DNS and why is it needed?",
+                            "hint": "DNS is the phonebook of the internet. Humans remember domain names, machines use IP addresses. DNS translates one to the other. Mention the hierarchy: Root servers, TLD servers, Authoritative servers.",
+                            "tags": [
+                                "DNS",
+                                "Networking"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between TCP and UDP?",
+                            "hint": "TCP is connection-oriented (3-way handshake), reliable, ordered. UDP is connectionless, faster, no guarantee. TCP for web/email, UDP for streaming/gaming/VoIP.",
+                            "tags": [
+                                "TCP",
+                                "UDP",
+                                "Transport Layer"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between HTTP and HTTPS?",
+                            "hint": "HTTPS = HTTP + TLS/SSL encryption. HTTP sends data in plaintext (port 80), HTTPS encrypts it (port 443). HTTPS provides authentication (server identity verification), integrity (data not tampered), and confidentiality.",
+                            "tags": [
+                                "HTTP",
+                                "HTTPS",
+                                "TLS"
+                            ]
+                        },
+                        {
+                            "question": "Explain the OSI model. What are the 7 layers?",
+                            "hint": "Physical (bits/cables), Data Link (MAC/frames), Network (IP/routing), Transport (TCP/UDP/segments), Session (connection management), Presentation (encryption/compression), Application (HTTP/FTP/DNS). In practice, TCP/IP model (4 layers) is more commonly referenced. Know which protocols belong to which layer.",
+                            "tags": [
+                                "OSI",
+                                "Networking",
+                                "TCP/IP"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between IPv4 and IPv6?",
+                            "hint": "IPv4: 32-bit address (~4.3B addresses, exhausted). IPv6: 128-bit address (practically unlimited). IPv6 also has: built-in IPsec, no NAT needed, simplified headers, better multicast. Transition: dual-stack (both), tunneling (IPv6 over IPv4), NAT64. Most of the internet still runs IPv4 with NAT.",
+                            "tags": [
+                                "IPv4",
+                                "IPv6",
+                                "Networking"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "Explain the full DNS resolution process step by step. How does a request travel from your browser to the server?",
+                            "hint": "Browser cache → OS cache → Router cache → ISP's Recursive Resolver → Root nameserver (.com) → TLD nameserver → Authoritative nameserver → IP returned → Browser opens TCP connection → TLS handshake (HTTPS) → HTTP request sent → Server processes → Response returns → Browser parses HTML, builds DOM, CSSOM → Render tree → Paint.",
+                            "tags": [
+                                "DNS",
+                                "HTTP",
+                                "Browser",
+                                "Rendering"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between a forward proxy and a reverse proxy?",
+                            "hint": "Forward proxy sits in front of clients (anonymity, content filtering). Reverse proxy sits in front of servers (load balancing, SSL termination, caching). Forward: client → proxy → internet. Reverse: internet → proxy → server. Examples: VPN (forward), Nginx/Cloudflare (reverse).",
+                            "tags": [
+                                "Proxy",
+                                "Load Balancing",
+                                "Nginx"
+                            ]
+                        },
+                        {
+                            "question": "How does a CDN work? Why does it make websites faster?",
+                            "hint": "CDN caches content on edge servers geographically closer to users. Reduces latency (shorter physical distance), offloads origin server, provides DDoS protection. Pull vs Push CDN. Cache invalidation via TTL or purge.",
+                            "tags": [
+                                "CDN",
+                                "Caching",
+                                "Latency"
+                            ]
+                        },
+                        {
+                            "question": "What is a TLS/SSL handshake? Walk me through it.",
+                            "hint": "Client Hello (supported ciphers) → Server Hello (chosen cipher + certificate) → Client verifies cert via CA → Key exchange (Pre-master secret) → Both derive session keys → Secure communication begins. Asymmetric crypto for handshake, symmetric for data.",
+                            "tags": [
+                                "TLS",
+                                "SSL",
+                                "Security",
+                                "Encryption"
+                            ]
+                        },
+                        {
+                            "question": "What are WebSockets? How do they differ from HTTP?",
+                            "hint": "WebSocket is a full-duplex, persistent connection protocol. HTTP: request-response (client initiates), connection closes. WebSocket: initial HTTP handshake (Upgrade header) then bidirectional communication. Use cases: chat, live sports, stock tickers, collaborative editing. Alternative: Server-Sent Events (SSE) for one-way server→client streaming.",
+                            "tags": [
+                                "WebSocket",
+                                "HTTP",
+                                "Real-time"
+                            ]
+                        },
+                        {
+                            "question": "What is CORS and why does it exist?",
+                            "hint": "Cross-Origin Resource Sharing — a browser security mechanism. Same-Origin Policy blocks requests to different domains. CORS headers (Access-Control-Allow-Origin) let servers whitelist allowed origins. Preflight requests (OPTIONS) check permission before actual request. Common source of frontend bugs. Not a security measure against server-to-server calls.",
+                            "tags": [
+                                "CORS",
+                                "Security",
+                                "Browser",
+                                "HTTP"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How does HTTP/2 differ from HTTP/1.1? What about HTTP/3?",
+                            "hint": "HTTP/2: binary framing, multiplexing (multiple streams over one connection), header compression (HPACK), server push. Solves head-of-line blocking at HTTP level but NOT at TCP level. HTTP/3: uses QUIC (UDP-based), solves TCP head-of-line blocking, faster connection setup (0-RTT), built-in encryption.",
+                            "tags": [
+                                "HTTP/2",
+                                "HTTP/3",
+                                "QUIC",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "How would you design a global DNS system from scratch?",
+                            "hint": "Hierarchical distributed system. Root → TLD → Authoritative. Heavy caching (TTL). Anycast for root servers (multiple servers same IP). Zone transfers for redundancy. Consider GeoDNS for latency-based routing. Discuss trade-offs: consistency vs availability (stale cache).",
+                            "tags": [
+                                "DNS",
+                                "System Design",
+                                "Distributed Systems"
+                            ]
+                        },
+                        {
+                            "question": "What is BGP and why is it important for the internet?",
+                            "hint": "Border Gateway Protocol — the routing protocol that makes the internet work. ASes (Autonomous Systems) exchange routing information. BGP decides the best path for data. BGP hijacking is a real security risk (e.g., routing traffic through malicious servers).",
+                            "tags": [
+                                "BGP",
+                                "Networking",
+                                "Routing"
+                            ]
+                        },
+                        {
+                            "question": "How does connection pooling work at the HTTP/network level?",
+                            "hint": "HTTP/1.1 Keep-Alive reuses TCP connections for multiple requests (avoids 3-way handshake per request). Connection pool = pre-established connections ready to use. HTTP/2 multiplexes streams over a single connection. At the app level, DB connection pools (PgBouncer, HikariCP) work similarly. Pool exhaustion → connection timeouts → cascading failures.",
+                            "tags": [
+                                "Connection Pooling",
+                                "HTTP",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "What is service discovery and why is it needed in microservices?",
+                            "hint": "Services need to find each other dynamically (IPs change with auto-scaling/deploys). Client-side discovery: client queries a registry (Eureka, Consul). Server-side discovery: load balancer queries registry (AWS ALB). DNS-based: Kubernetes services. Registry must be highly available. Health checks remove dead instances.",
+                            "tags": [
+                                "Service Discovery",
+                                "Microservices",
+                                "Networking"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "If a user in India types google.com and a user in the US types the same, do they hit the same server? Explain the full journey.",
+                            "hint": "No! GeoDNS/Anycast returns different IPs based on geographic location. Google has data centers worldwide. The DNS resolver returns the IP of the nearest edge server or data center. Additionally, CDN edge nodes cache static content closer to users. Even the TCP paths differ due to different ISPs and peering arrangements.",
+                            "tags": [
+                                "DNS",
+                                "CDN",
+                                "GeoDNS",
+                                "Anycast"
+                            ]
+                        },
+                        {
+                            "question": "You notice that DNS resolution is taking 2+ seconds for some users. How would you debug and fix this?",
+                            "hint": "Check browser DNS cache, OS cache, router cache. Check if ISP resolver is slow (switch to 8.8.8.8 or 1.1.1.1). Check TTL values (too low = frequent lookups). Use DNS prefetching (<link rel='dns-prefetch'>). Consider reducing CNAME chains. Check for DNS provider issues. Use tools: dig, nslookup, traceroute.",
+                            "tags": [
+                                "DNS",
+                                "Debugging",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "Why does your browser sometimes show 'DNS_PROBE_FINISHED_NXDOMAIN'? List every possible cause.",
+                            "hint": "Domain doesn't exist (typo), DNS server unreachable, local DNS cache corrupted, firewall blocking DNS, ISP DNS issue, VPN interfering, hosts file override, domain expired, DNS propagation not complete yet, DNSSEC validation failure.",
+                            "tags": [
+                                "DNS",
+                                "Debugging",
+                                "Browser"
+                            ]
+                        },
+                        {
+                            "question": "Users report intermittent packet loss. How do you diagnose whether it's a client, network, or server issue?",
+                            "hint": "Tools: traceroute (find which hop drops), mtr (continuous traceroute), ping (basic connectivity), tcpdump/Wireshark (packet capture). Check: Is it specific to one ISP? One region? One server? Correlate with server metrics (CPU/memory spikes). Check NIC errors (ifconfig/ethtool). Could be: congested link, faulty hardware, MTU mismatch, rate limiting, TCP retransmission storms.",
+                            "tags": [
+                                "Debugging",
+                                "Networking",
+                                "Performance"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "search-indexing",
+                "name": "Search & Indexing",
+                "icon": "Zap",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "How does Google return search results so fast?",
+                            "hint": "Pre-built inverted index (word → list of documents). They don't search live — they've already crawled and indexed billions of pages. Results are ranked using algorithms (PageRank, ML models). Served from distributed systems across global data centers.",
+                            "tags": [
+                                "Search",
+                                "Indexing",
+                                "PageRank"
+                            ]
+                        },
+                        {
+                            "question": "What is an inverted index?",
+                            "hint": "A data structure that maps content (words/terms) to their locations (documents/pages). Like a book index but for the entire web. 'python' → [doc1, doc5, doc99]. Enables O(1) lookup for search queries instead of scanning every document.",
+                            "tags": [
+                                "Indexing",
+                                "Data Structures",
+                                "Search"
+                            ]
+                        },
+                        {
+                            "question": "What is a web crawler and how does it work?",
+                            "hint": "A bot that systematically browses the web. Starts from seed URLs → fetches page → extracts links → adds to queue → repeats. Politeness: respects robots.txt, rate limits. Challenges: duplicate detection (URL normalization, content hashing), infinite loops, dynamic content (JS rendering), prioritization (PageRank-based). Used by Google, Bing, scrapers.",
+                            "tags": [
+                                "Web Crawler",
+                                "Search",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is TF-IDF and how is it used in search?",
+                            "hint": "Term Frequency-Inverse Document Frequency. TF = how often a term appears in a document. IDF = how rare the term is across all documents. TF-IDF = TF × IDF. Words common in one doc but rare overall get high scores. Used for relevance ranking. Modern search uses BM25 (improved TF-IDF) and neural embeddings.",
+                            "tags": [
+                                "TF-IDF",
+                                "Search",
+                                "Ranking"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "When you search 'tariff in china' on Google it's instant, but searching 'lasagna recipe' in your Google Doc is slow. Why?",
+                            "hint": "Google Search uses a pre-built inverted index across billions of crawled pages — it's a READ from an index, not a live search. Google Docs searches within YOUR document content in real-time — it's doing a linear/pattern scan through the document text. Also: Google Search results are cached for popular queries. Google Docs has no pre-built index for your personal content.",
+                            "tags": [
+                                "Search",
+                                "Indexing",
+                                "Caching",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "How would you implement a search functionality for an e-commerce site?",
+                            "hint": "Use Elasticsearch/Solr (inverted index). Index product data (title, description, categories). Support features: tokenization, stemming, fuzzy matching, faceted search (filters), autocomplete (prefix trees/n-grams), relevance scoring. Consider: search-as-you-type, spell correction, synonyms.",
+                            "tags": [
+                                "Search",
+                                "Elasticsearch",
+                                "E-commerce"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between full-text search and a simple LIKE query in SQL?",
+                            "hint": "LIKE '%term%' does a sequential scan — O(n) per query, no ranking, no stemming. Full-text search uses inverted indices — O(1) lookup, supports ranking (TF-IDF/BM25), stemming (run/running/ran), tokenization, stop words removal. LIKE is fine for small data, full-text search for anything serious.",
+                            "tags": [
+                                "Search",
+                                "SQL",
+                                "Indexing",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "How does Elasticsearch distribute data across nodes?",
+                            "hint": "Index split into shards (horizontal partitioning). Each shard is a Lucene index. Primary shards + replica shards for HA. Documents routed by hash(doc_id) % num_shards. Searches scatter-gather across all shards. More shards = more parallelism but more overhead. Plan shard count carefully — can't change primary shard count after creation.",
+                            "tags": [
+                                "Elasticsearch",
+                                "Sharding",
+                                "Distributed Systems"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How does Google's PageRank algorithm work at a high level?",
+                            "hint": "Treats the web as a directed graph. Each page is a node, each link is an edge. A page's rank depends on the number and quality of pages linking TO it. It's like a voting system — a link from a high-rank page is worth more. Iteratively computed until convergence. Now supplemented by hundreds of other signals (ML, user behavior).",
+                            "tags": [
+                                "PageRank",
+                                "Graph",
+                                "Algorithm"
+                            ]
+                        },
+                        {
+                            "question": "Design a typeahead/autocomplete system for a search bar with 100M queries/day.",
+                            "hint": "Trie data structure for prefix matching. Top-K results per prefix (pre-computed). Distributed tries across servers. Caching popular prefixes in memory/CDN. Sampling and aggregating query logs to update popularity. Consider: personalization, trending queries, multi-language support.",
+                            "tags": [
+                                "System Design",
+                                "Trie",
+                                "Caching",
+                                "Scale"
+                            ]
+                        },
+                        {
+                            "question": "What is semantic search and how does it differ from keyword search?",
+                            "hint": "Keyword search matches exact terms (inverted index). Semantic search understands meaning — 'car' matches 'automobile'. Uses vector embeddings (BERT, sentence-transformers) + similarity search (cosine similarity). Stored in vector databases (Pinecone, Weaviate, pgvector). Hybrid: combine keyword (BM25) + semantic scores. Powers modern AI-driven search.",
+                            "tags": [
+                                "Semantic Search",
+                                "Embeddings",
+                                "AI",
+                                "Vector DB"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "Why can Ctrl+F in a small PDF be slower than a Google search across the entire internet?",
+                            "hint": "Ctrl+F does a linear scan through the document — O(n) operation every single time. Google pre-indexes everything into an inverted index — it's just a hash map lookup O(1). It's the difference between reading every page of every book in a library vs. looking up the index at the back. Pre-computation vs on-the-fly computation.",
+                            "tags": [
+                                "Search",
+                                "Indexing",
+                                "Complexity",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "You have a search system that shows stale results for 30 minutes after a product is updated. How do you fix it?",
+                            "hint": "Check index refresh interval (Elasticsearch near-real-time default is 1s, but may be configured higher). Use a change data capture (CDC) pipeline to push updates to the search index. Consider dual-write (risky — consistency issues) vs event-driven reindexing. Cache invalidation for search results. Partial document updates vs full reindex.",
+                            "tags": [
+                                "Search",
+                                "Caching",
+                                "CDC",
+                                "Consistency"
+                            ]
+                        },
+                        {
+                            "question": "Your search relevance is poor — users search 'cheap laptops' but get gaming rigs. How do you debug and improve?",
+                            "hint": "Check tokenization (is 'cheap' being matched to price field?). Boost fields differently (title > description). Add synonyms ('cheap' = 'affordable', 'budget'). Analyze click-through data (what users actually click). Use Learning-to-Rank (LTR) with ML. Add filters/facets for price range. Consider query intent classification. A/B test ranking changes.",
+                            "tags": [
+                                "Search",
+                                "Relevance",
+                                "ML",
+                                "Debugging"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "database-performance",
+                "name": "Database & Performance",
+                "icon": "Database",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is the difference between SQL and NoSQL databases?",
+                            "hint": "SQL: structured schema, ACID, good for complex queries (joins), vertical scaling. NoSQL: flexible schema, BASE, horizontal scaling, types = document (MongoDB), key-value (Redis), column-family (Cassandra), graph (Neo4j). Choose based on data model and access patterns.",
+                            "tags": [
+                                "SQL",
+                                "NoSQL",
+                                "Databases"
+                            ]
+                        },
+                        {
+                            "question": "What is database indexing and why does it matter?",
+                            "hint": "An index is like a book's table of contents — instead of scanning every row (full table scan O(n)), the DB jumps directly to the right page (O(log n) with B-tree). Trade-off: faster reads, slower writes (index must be updated). Don't over-index.",
+                            "tags": [
+                                "Indexing",
+                                "Performance",
+                                "B-tree"
+                            ]
+                        },
+                        {
+                            "question": "What are ACID properties?",
+                            "hint": "Atomicity (all or nothing), Consistency (valid state after txn), Isolation (concurrent txns don't interfere), Durability (committed data survives crashes). Essential for banking, e-commerce — anywhere data integrity matters.",
+                            "tags": [
+                                "ACID",
+                                "Transactions",
+                                "Databases"
+                            ]
+                        },
+                        {
+                            "question": "What is database normalization? When would you denormalize?",
+                            "hint": "Normalization: organizing data to reduce redundancy (1NF, 2NF, 3NF, BCNF). Reduces update anomalies. Denormalization: intentionally adding redundancy for read performance. Denormalize when: read-heavy workloads, complex joins are too slow, data warehouse/analytics, caching in NoSQL. Trade-off: consistency vs speed.",
+                            "tags": [
+                                "Normalization",
+                                "Databases",
+                                "Schema Design"
+                            ]
+                        },
+                        {
+                            "question": "What is a stored procedure and when should you use one?",
+                            "hint": "Pre-compiled SQL code stored in the DB. Pros: faster execution (no parsing), reduces network round-trips, enforces business logic at DB level. Cons: harder to version control, vendor lock-in, debugging is tough, mixes business logic with storage. Use for: batch operations, complex reports, data validation constraints. Avoid for: core business logic better kept in application.",
+                            "tags": [
+                                "Stored Procedures",
+                                "SQL",
+                                "Databases"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "Your API endpoint is becoming very slow because database queries are taking too long. How would you diagnose and fix it?",
+                            "hint": "Step 1: Identify slow queries (EXPLAIN ANALYZE). Step 2: Add missing indexes on WHERE/JOIN columns. Step 3: Check for N+1 query problem — use JOINs or batch loading. Step 4: Add a caching layer (Redis) for hot data. Step 5: Read replicas for read-heavy workloads. Step 6: Denormalize if needed. Step 7: Connection pooling. Step 8: Consider query optimization (select only needed columns, pagination with cursor instead of OFFSET).",
+                            "tags": [
+                                "Performance",
+                                "SQL",
+                                "Caching",
+                                "Optimization"
+                            ]
+                        },
+                        {
+                            "question": "What is the N+1 query problem and how do you solve it?",
+                            "hint": "Fetching a list of N items, then making 1 additional query per item = N+1 queries. Example: fetch 100 orders, then fetch customer for each order = 101 queries. Fix: use JOIN (SQL), eager loading (ORM), batch loading (DataLoader in GraphQL), or denormalization.",
+                            "tags": [
+                                "N+1",
+                                "ORM",
+                                "Performance",
+                                "SQL"
+                            ]
+                        },
+                        {
+                            "question": "When should you use database replication vs sharding?",
+                            "hint": "Replication = copies of same data on multiple servers. Good for read scaling and high availability (failover). Sharding = splitting data across servers (e.g., users A-M on shard1, N-Z on shard2). Good for write scaling and data volume. Often you need both. Start with replication, add sharding when data doesn't fit on one server.",
+                            "tags": [
+                                "Replication",
+                                "Sharding",
+                                "Scaling"
+                            ]
+                        },
+                        {
+                            "question": "What is connection pooling and why is it important?",
+                            "hint": "Creating a DB connection is expensive (TCP handshake, authentication, memory allocation). Connection pooling reuses existing connections from a pre-created pool. Tools: PgBouncer (Postgres), HikariCP (Java). Without it, high-traffic apps exhaust DB connections and crash.",
+                            "tags": [
+                                "Connection Pooling",
+                                "Performance",
+                                "Databases"
+                            ]
+                        },
+                        {
+                            "question": "What is a Write-Ahead Log (WAL) and why is it critical?",
+                            "hint": "Before writing data to disk, the DB writes the change to a sequential log file. If the system crashes mid-write, the WAL can replay changes to recover. Used by Postgres, SQLite, MySQL InnoDB. WAL enables: crash recovery, replication (stream WAL to replicas), point-in-time recovery. Sequential writes to WAL are much faster than random writes to data files.",
+                            "tags": [
+                                "WAL",
+                                "Databases",
+                                "Durability",
+                                "Recovery"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How would you migrate a monolithic database to a microservices architecture without downtime?",
+                            "hint": "Strangler Fig pattern. Step 1: Identify domain boundaries. Step 2: Create new service DB alongside old one. Step 3: Dual-write or use CDC (Change Data Capture) to sync. Step 4: Gradually shift reads to new DB. Step 5: Verify data consistency. Step 6: Cut over writes. Step 7: Decommission old schema. Use feature flags for gradual rollout.",
+                            "tags": [
+                                "Migration",
+                                "Microservices",
+                                "CDC",
+                                "Patterns"
+                            ]
+                        },
+                        {
+                            "question": "Explain database transaction isolation levels and their trade-offs.",
+                            "hint": "Read Uncommitted (dirty reads allowed), Read Committed (no dirty reads, but non-repeatable reads), Repeatable Read (no phantom reads in some DBs), Serializable (full isolation, slowest). Higher isolation = more consistency but less performance/throughput. Postgres default is Read Committed. MySQL InnoDB default is Repeatable Read.",
+                            "tags": [
+                                "Transactions",
+                                "Isolation",
+                                "Concurrency"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between B-tree and LSM-tree? When would you choose each?",
+                            "hint": "B-tree: balanced tree, in-place updates, great for reads (O(log n)), used by Postgres/MySQL. LSM-tree: append-only, writes to memtable then flushes to sorted files (SSTables), great for writes, needs compaction. LSM used by Cassandra, RocksDB, LevelDB. Choose B-tree for read-heavy, LSM for write-heavy workloads.",
+                            "tags": [
+                                "B-tree",
+                                "LSM-tree",
+                                "Databases",
+                                "Data Structures"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "You added an index to a slow query but it's still not using the index. What could be wrong?",
+                            "hint": "Possible reasons: function/expression on indexed column (WHERE YEAR(created_at) = 2024), type mismatch, NULL comparisons (IS NULL), leading wildcard LIKE '%term', low selectivity (index on boolean column), optimizer decides full scan is cheaper for small tables, stale statistics (run ANALYZE), composite index but wrong column order.",
+                            "tags": [
+                                "Indexing",
+                                "SQL",
+                                "Debugging",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "Your database has 500M rows and a query with OFFSET 10000000 LIMIT 10 is extremely slow. Why and how do you fix it?",
+                            "hint": "OFFSET forces the DB to scan and discard 10M rows before returning 10. Fix: use cursor-based pagination (WHERE id > last_seen_id LIMIT 10) — this uses the index directly. Alternative: keyset pagination. If the UI needs 'jump to page X', consider pre-computed page boundaries or limit max page depth.",
+                            "tags": [
+                                "Pagination",
+                                "Performance",
+                                "SQL",
+                                "Scale"
+                            ]
+                        },
+                        {
+                            "question": "Two transactions deadlock each other. How does the database resolve it and how do you prevent it?",
+                            "hint": "DB detects deadlock via wait-for graph (cycle detection). One transaction is chosen as victim and rolled back. Prevention: always acquire locks in the same order, keep transactions short, use row-level locks instead of table-level, use SELECT FOR UPDATE NOWAIT or SKIP LOCKED, retry with backoff after deadlock errors. Monitor pg_stat_activity or SHOW ENGINE INNODB STATUS.",
+                            "tags": [
+                                "Deadlocks",
+                                "Concurrency",
+                                "Databases",
+                                "Debugging"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "scalability",
+                "name": "Scalability",
+                "icon": "Layers",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is the difference between vertical and horizontal scaling?",
+                            "hint": "Vertical = bigger machine (more CPU/RAM). Simple but has limits and is a single point of failure. Horizontal = more machines. Complex (needs load balancing, stateless design) but theoretically unlimited. Start vertical, go horizontal when needed.",
+                            "tags": [
+                                "Scaling",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is a load balancer and why do we need it?",
+                            "hint": "Distributes incoming traffic across multiple servers. Prevents any single server from being overwhelmed. Provides high availability (if one server dies, traffic routes to others). Algorithms: Round Robin, Least Connections, IP Hash. L4 (transport) vs L7 (application) — L7 can make smarter decisions based on URL/headers.",
+                            "tags": [
+                                "Load Balancing",
+                                "High Availability"
+                            ]
+                        },
+                        {
+                            "question": "What is session management and why does it complicate scaling?",
+                            "hint": "Sessions store user state (login, cart). If stored on server memory, user must always hit same server (sticky sessions). Complicates load balancing. Solutions: store sessions externally in Redis/DB, use stateless tokens (JWT), cookie-based sessions. JWT: no server-side storage but can't revoke easily. Redis sessions: revocable but need Redis availability.",
+                            "tags": [
+                                "Sessions",
+                                "Scaling",
+                                "Architecture"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "How would you scale a system from 1,000 to 1,000,000 users?",
+                            "hint": "Stage 1: Vertical scaling, add caching (Redis), optimize DB queries. Stage 2: Add load balancer + multiple app servers. Read replicas for DB. Stage 3: CDN for static assets. Stage 4: Microservices to scale independently. Stage 5: Database sharding. Stage 6: Message queues for async processing. Stage 7: Multi-region deployment.",
+                            "tags": [
+                                "Scaling",
+                                "Architecture",
+                                "System Design"
+                            ]
+                        },
+                        {
+                            "question": "What does it mean for an application to be 'stateless'? Why is it important for scaling?",
+                            "hint": "Stateless = server doesn't store session data locally. Any server can handle any request. State stored externally (Redis, DB, JWT tokens). Important because: load balancer can route to any server, easy to add/remove servers, no sticky sessions needed, simpler failover.",
+                            "tags": [
+                                "Stateless",
+                                "Scaling",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is rate limiting and how would you implement it?",
+                            "hint": "Controls how many requests a client can make in a time window. Prevents abuse, DDoS, and resource exhaustion. Algorithms: Token Bucket (flexible bursts), Sliding Window (smooth), Fixed Window (simple). Implement with Redis (INCR + EXPIRE), API Gateway (Kong, AWS API Gateway), or middleware. Apply per user, per IP, or per API key.",
+                            "tags": [
+                                "Rate Limiting",
+                                "API",
+                                "Security"
+                            ]
+                        },
+                        {
+                            "question": "How do you scale a database that's become the bottleneck?",
+                            "hint": "Step 1: Optimize queries (indexes, EXPLAIN ANALYZE). Step 2: Add read replicas for read-heavy loads. Step 3: Implement caching (Redis) for hot data. Step 4: Connection pooling (PgBouncer). Step 5: Vertical scaling. Step 6: Partitioning (table-level). Step 7: Sharding (distribute across servers). Step 8: Consider CQRS or event sourcing for extreme cases.",
+                            "tags": [
+                                "Database",
+                                "Scaling",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "What is backpressure and how do you handle it in a distributed system?",
+                            "hint": "When a component can’t process data as fast as it receives it. Without backpressure: OOM, dropped messages, cascading failures. Strategies: bounded queues (reject when full), rate limiting producers, flow control (TCP does this), reactive streams (pull-based), circuit breaker on overwhelmed services. Example: Kafka consumer lag is a backpressure signal.",
+                            "tags": [
+                                "Backpressure",
+                                "Distributed Systems",
+                                "Resilience"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How do you handle a thundering herd problem (cache stampede)?",
+                            "hint": "When cache expires and thousands of requests hit the DB simultaneously. Solutions: Lock/semaphore (only one request rebuilds cache), early expiration (probabilistic refresh before TTL), stale-while-revalidate (serve stale, refresh async), pre-warming cache, stagger TTLs (add jitter).",
+                            "tags": [
+                                "Caching",
+                                "Thundering Herd",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "Design a system that handles 10,000 requests per second with 99.99% uptime.",
+                            "hint": "Multi-AZ deployment, active-active or active-passive failover. Load balancers with health checks. Auto-scaling groups. Circuit breakers for downstream failures. Async processing for non-critical paths. Read replicas + connection pooling. Caching (Redis cluster). CDN for static content. Monitoring + alerting (P99 latency, error rates). Chaos engineering to test resilience.",
+                            "tags": [
+                                "High Availability",
+                                "System Design",
+                                "SRE"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "Your auto-scaling is set up but during traffic spikes, users still experience errors for 2-3 minutes. Why?",
+                            "hint": "Cold start problem. New instances take time to: spin up, download container image, start application, warm up JIT, establish DB connections, load caches. Solutions: pre-warmed instances (minimum capacity), predictive scaling, over-provision slightly, use lighter containers, health check grace period, connection pool pre-warming.",
+                            "tags": [
+                                "Auto-scaling",
+                                "Cold Start",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "You've horizontally scaled your servers but your system is STILL slow. What's the bottleneck?",
+                            "hint": "Bottleneck likely moved to: Database (single-writer bottleneck), shared state (session store), downstream services, network calls (synchronous chains), disk I/O, single queue consumer, DNS resolution, TLS handshake overhead, connection pool exhaustion. Use profiling and distributed tracing (Jaeger/Zipkin) to find it.",
+                            "tags": [
+                                "Bottleneck",
+                                "Debugging",
+                                "Performance"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "caching",
+                "name": "Caching",
+                "icon": "RefreshCw",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is caching and what are the different layers of caching?",
+                            "hint": "Storing frequently accessed data in a faster storage layer. Layers: Browser cache → CDN (edge) → Application server (local/in-memory) → Distributed cache (Redis/Memcached) → Database query cache. Each layer reduces load on the next.",
+                            "tags": [
+                                "Caching",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between Redis and Memcached?",
+                            "hint": "Redis: data structures (strings, lists, sets, hashes, sorted sets), persistence, pub/sub, Lua scripting, cluster mode. Memcached: simple key-value, multi-threaded (better for pure caching), no persistence. Choose Redis for more features, Memcached for simplest possible cache.",
+                            "tags": [
+                                "Redis",
+                                "Memcached",
+                                "Caching"
+                            ]
+                        },
+                        {
+                            "question": "How does CDN caching work and what are its benefits?",
+                            "hint": "Content Delivery Network stores copies of static assets (images, CSS, JS) at edge servers worldwide. User served from nearest edge. Benefits: reduced latency, lower origin load, DDoS protection. Cache-Control headers control TTL. Cache invalidation via purge API or versioned URLs (/style.v2.css). Examples: Cloudflare, CloudFront, Akamai.",
+                            "tags": [
+                                "CDN",
+                                "Caching",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "What are HTTP cache headers and how do they work?",
+                            "hint": "Cache-Control (max-age, no-cache, no-store, public/private). ETag (content hash for validation). Last-Modified + If-Modified-Since (time-based). 304 Not Modified response saves bandwidth. Immutable for versioned assets. stale-while-revalidate for better UX. Browser → CDN → origin each respect these headers.",
+                            "tags": [
+                                "HTTP",
+                                "Caching",
+                                "Headers"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "Explain the difference between Write-Through, Write-Around, and Write-Back caching.",
+                            "hint": "Write-Through: write to cache AND DB simultaneously. Consistent but slower writes. Write-Around: write to DB only, cache fills on read miss. Reduces cache pollution but first read is slow. Write-Back: write to cache only, async write to DB. Fast writes but risk of data loss on crash.",
+                            "tags": [
+                                "Caching",
+                                "Write Strategies",
+                                "Consistency"
+                            ]
+                        },
+                        {
+                            "question": "What is cache invalidation and why is it considered one of the hardest problems in CS?",
+                            "hint": "Ensuring cached data is updated/removed when source data changes. Hard because: distributed systems make coordination difficult, race conditions between update and invalidation, stale data can persist, TTL too short = cache miss, TTL too long = stale data. Patterns: TTL-based, event-driven invalidation, versioned keys.",
+                            "tags": [
+                                "Cache Invalidation",
+                                "Distributed Systems"
+                            ]
+                        },
+                        {
+                            "question": "What are LRU, LFU, and FIFO eviction policies? When would you choose each?",
+                            "hint": "LRU (Least Recently Used): evicts oldest-accessed item. Good general purpose. LFU (Least Frequently Used): evicts least-accessed item. Good when some items are consistently hot. FIFO: evicts in insertion order. Simplest. LRU is the most commonly used. Some systems use ARC (Adaptive Replacement Cache) which combines LRU and LFU.",
+                            "tags": [
+                                "Caching",
+                                "Eviction",
+                                "Data Structures"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How would you design a distributed caching system like Redis Cluster?",
+                            "hint": "Hash slots (16384 slots across nodes). Consistent hashing for key distribution. Master-replica pairs for HA. Gossip protocol for cluster state. Client-side routing (MOVED/ASK redirects). Handle: rebalancing on node add/remove, split-brain prevention, persistence (RDB snapshots + AOF), cross-datacenter replication.",
+                            "tags": [
+                                "Redis",
+                                "Distributed Systems",
+                                "System Design"
+                            ]
+                        },
+                        {
+                            "question": "What is consistent hashing and why is it important for caching?",
+                            "hint": "Traditional hash: hash(key) % N servers. Adding/removing a server remaps almost ALL keys (cache miss storm). Consistent hashing: keys and servers placed on a ring. Only K/N keys remap when a server changes. Virtual nodes for even distribution. Used by: Cassandra, DynamoDB, CDNs, distributed caches.",
+                            "tags": [
+                                "Consistent Hashing",
+                                "Distributed Systems",
+                                "Caching"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "Your Redis cache has a 99% hit rate but your system is still slow. What's going on?",
+                            "hint": "The 1% cache misses could be the most expensive queries (Pareto principle). Check: are misses hitting the DB with complex queries? Hot key problem (single key getting millions of hits). Network latency to Redis (co-locate). Serialization/deserialization overhead (use MessagePack instead of JSON). Large values (compress). Pipeline multiple commands instead of round-trips.",
+                            "tags": [
+                                "Redis",
+                                "Performance",
+                                "Debugging"
+                            ]
+                        },
+                        {
+                            "question": "How do you prevent a cache penetration attack where users query for non-existent data?",
+                            "hint": "Cache penetration = querying keys that never exist, bypassing cache every time. Solutions: Cache negative results (null with short TTL), Bloom filter (probabilistic check before DB query), input validation, rate limiting. Bloom filter is space-efficient (~1% false positive rate) and prevents 99% of unnecessary DB hits.",
+                            "tags": [
+                                "Security",
+                                "Bloom Filter",
+                                "Caching"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "api-design",
+                "name": "API Design",
+                "icon": "ArrowLeftRight",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is REST and what are its key principles?",
+                            "hint": "REpresentational State Transfer. Principles: stateless, resource-based (nouns not verbs), standard HTTP methods (GET/POST/PUT/DELETE), status codes, uniform interface. Resource = /users/123, not /getUser?id=123. HATEOAS for discoverability.",
+                            "tags": [
+                                "REST",
+                                "API",
+                                "HTTP"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between REST, GraphQL, and gRPC?",
+                            "hint": "REST: resource-based, multiple endpoints, over/under-fetching possible. Great for public APIs. GraphQL: single endpoint, client requests exactly what it needs, solves over/under-fetching, complex backend. Great for mobile/varied clients. gRPC: binary (ProtoBuf), strictly typed, bidirectional streaming, fast. Great for internal microservices.",
+                            "tags": [
+                                "REST",
+                                "GraphQL",
+                                "gRPC",
+                                "API"
+                            ]
+                        },
+                        {
+                            "question": "What is a webhook and how does it differ from polling?",
+                            "hint": "Polling: client repeatedly asks server 'any updates?' (wasteful if nothing changed). Webhook: server pushes data to client's URL when event happens (event-driven, real-time). Webhook challenges: delivery guarantees (retries with backoff), security (signature verification), client downtime handling. Used by: Stripe, GitHub, Slack.",
+                            "tags": [
+                                "Webhooks",
+                                "API",
+                                "Event-Driven"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "How do you design a good RESTful API? Give examples of common mistakes.",
+                            "hint": "Good: /users, /users/{id}/orders, proper HTTP methods, versioning (/v1/), pagination, filtering. Mistakes: /getUsers (verb as noun), /users/delete/5 (action in URL), inconsistent naming, not using status codes properly, huge payloads without pagination, no rate limiting, no versioning.",
+                            "tags": [
+                                "REST",
+                                "API Design",
+                                "Best Practices"
+                            ]
+                        },
+                        {
+                            "question": "How do you handle API versioning? What are the different strategies?",
+                            "hint": "URL versioning (/v1/users) — most common, clear. Header versioning (Accept: application/vnd.api.v1+json) — cleaner URLs. Query parameter (?version=1) — easy but messy. Each has trade-offs. URL versioning is the most widely used because it's explicit and easy to document.",
+                            "tags": [
+                                "API",
+                                "Versioning",
+                                "Best Practices"
+                            ]
+                        },
+                        {
+                            "question": "What is idempotency in APIs? Why is it important?",
+                            "hint": "An operation is idempotent if calling it multiple times produces the same result as calling it once. GET, PUT, DELETE are idempotent. POST is NOT. Important for retry logic (network failure mid-request). Implement with idempotency keys (client sends unique ID, server deduplicates).",
+                            "tags": [
+                                "API",
+                                "Idempotency",
+                                "Reliability"
+                            ]
+                        },
+                        {
+                            "question": "What are the different API pagination strategies?",
+                            "hint": "Offset-based: ?page=3&limit=20 (simple, but slow at high offsets). Cursor-based: ?after=abc123 (performant, consistent with real-time data). Keyset: WHERE id > last_id LIMIT 20 (uses index, fast). Each type handles insertions/deletions differently. Cursor-based is best for infinite scroll. Include total_count, has_more, next_cursor in response.",
+                            "tags": [
+                                "API",
+                                "Pagination",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "What is the N+1 problem in GraphQL and how do you solve it?",
+                            "hint": "Query resolves a list of users, then for each user resolves their posts = 1 query for users + N queries for posts. Solution: DataLoader (batching + caching). Collects all IDs in a single tick, fires one batched query. Also: use JOINs in SQL resolver, implement query complexity limits, persisted queries for known patterns.",
+                            "tags": [
+                                "GraphQL",
+                                "N+1",
+                                "DataLoader",
+                                "Performance"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "Design an API rate limiter that handles 10M+ requests/minute across a distributed system.",
+                            "hint": "Centralized counter in Redis (fast, atomic). Token Bucket algorithm for burst allowance. Sliding Window for smooth limits. Distribute rate limit state using Redis Cluster. Return 429 with Retry-After header. Consider: per-user, per-IP, per-endpoint limits. Use API Gateway (Kong/AWS) for enforcement. Handle race conditions with Lua scripting in Redis.",
+                            "tags": [
+                                "Rate Limiting",
+                                "Redis",
+                                "System Design"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "Your REST API takes 5 seconds to process a request. You can't make it faster. How do you design the API?",
+                            "hint": "Async API pattern. POST /jobs → returns 202 Accepted with job_id. Client polls GET /jobs/{id} for status. Or use webhooks: client provides callback URL, server notifies when done. Or WebSocket for real-time updates. Return estimated completion time. Provide a cancel endpoint. This is how AWS, Stripe, and most cloud providers handle long-running operations.",
+                            "tags": [
+                                "API Design",
+                                "Async",
+                                "Webhooks",
+                                "Patterns"
+                            ]
+                        },
+                        {
+                            "question": "A client is making an API call and intermittently getting different results for the same request. What could cause this?",
+                            "hint": "Load balancer routing to servers with different data (replication lag). Caching inconsistency (some edge servers have stale cache). Race condition in concurrent writes. Eventually consistent database. DNS round-robin to different data centers. A/B testing or feature flags. Request hitting different microservice versions during deployment (rolling update).",
+                            "tags": [
+                                "Debugging",
+                                "Consistency",
+                                "Distributed Systems"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "distributed-systems",
+                "name": "Distributed Systems",
+                "icon": "Handshake",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is the CAP theorem?",
+                            "hint": "In a distributed system, you can only guarantee two of three: Consistency (all nodes see same data), Availability (every request gets a response), Partition Tolerance (system works despite network splits). Since network partitions are inevitable, the real choice is CP (strong consistency, may reject requests) vs AP (always available, may serve stale data).",
+                            "tags": [
+                                "CAP",
+                                "Distributed Systems",
+                                "Theory"
+                            ]
+                        },
+                        {
+                            "question": "What is eventual consistency? Give a real-world example.",
+                            "hint": "After an update, all replicas will eventually converge to the same value — but not immediately. Example: Your Instagram post shows different like counts to different users for a few seconds. DNS propagation (TTL cache). YouTube view counter. It's acceptable where strong consistency isn't critical and availability is more important.",
+                            "tags": [
+                                "Consistency",
+                                "Distributed Systems"
+                            ]
+                        },
+                        {
+                            "question": "What is a CRDT and when would you use one?",
+                            "hint": "Conflict-free Replicated Data Type — data structures that can be merged without conflicts. Types: G-Counter (grow-only), PN-Counter (add/subtract), OR-Set (add/remove). Each replica can update independently; merges are automatic and deterministic. Use for: collaborative editing (Google Docs), offline-first apps, shopping carts. No coordination needed.",
+                            "tags": [
+                                "CRDT",
+                                "Distributed Systems",
+                                "Conflict Resolution"
+                            ]
+                        },
+                        {
+                            "question": "What is the difference between leader-based and leaderless replication?",
+                            "hint": "Leader-based: one primary handles writes, replicas handle reads (Postgres, MySQL). Simple but single point of write failure. Leaderless: any node accepts writes, uses quorum (W + R > N) for consistency (Cassandra, DynamoDB). More available but complex conflict resolution. Multi-leader: multiple primaries in different regions (CockroachDB).",
+                            "tags": [
+                                "Replication",
+                                "Distributed Systems",
+                                "Databases"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "What is a distributed lock and when would you need one?",
+                            "hint": "A mechanism to ensure only one process across multiple servers can access a shared resource at a time. Use cases: preventing duplicate cron job execution, ensuring exactly-once payment processing. Tools: Redis (Redlock), Zookeeper, Etcd. Must handle: node failure (TTL/lease expiry), split-brain, clock skew.",
+                            "tags": [
+                                "Distributed Locking",
+                                "Concurrency",
+                                "Redis"
+                            ]
+                        },
+                        {
+                            "question": "Explain the Saga pattern for distributed transactions.",
+                            "hint": "A sequence of local transactions where each step triggers the next. If a step fails, compensating transactions undo previous steps. Example: Order service → Payment service → Inventory service. If inventory fails, compensate by refunding payment and canceling order. Two types: Choreography (events) vs Orchestration (central coordinator).",
+                            "tags": [
+                                "Saga",
+                                "Microservices",
+                                "Transactions"
+                            ]
+                        },
+                        {
+                            "question": "What is a circuit breaker pattern?",
+                            "hint": "Prevents cascading failures. States: Closed (normal operation), Open (stop calling failing service, return fallback), Half-Open (test if service recovered). Like an electrical circuit breaker. If service X fails 50% of calls, stop calling it (fail fast) instead of waiting and timing out. Tools: Hystrix, Resilience4j.",
+                            "tags": [
+                                "Circuit Breaker",
+                                "Resilience",
+                                "Microservices"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How does Raft consensus algorithm work?",
+                            "hint": "Leader election + log replication. Nodes are Leader, Follower, or Candidate. Leader sends heartbeats; if followers don't hear for a timeout, they become candidates and start election. Leader replicates log entries to followers. Committed only when majority acknowledges. Simpler than Paxos. Used in etcd (Kubernetes), Consul, CockroachDB.",
+                            "tags": [
+                                "Raft",
+                                "Consensus",
+                                "Distributed Systems"
+                            ]
+                        },
+                        {
+                            "question": "What is a vector clock and why can't we use wall clocks in distributed systems?",
+                            "hint": "Wall clocks drift (NTP sync isn't perfect), so two events can have the same timestamp but different order. Vector clocks track causality — each node maintains a vector of counters. Can determine: happened-before, happened-after, or concurrent (conflict). Used in Dynamo-style databases (Riak). Alternative: Lamport timestamps (simpler but less info).",
+                            "tags": [
+                                "Vector Clocks",
+                                "Time",
+                                "Distributed Systems"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "You have a distributed system with 5 nodes. 2 nodes go down. Can the system still function? Under what conditions?",
+                            "hint": "Depends on quorum requirements. For Raft/Paxos: need majority (3/5). With 3 alive, YES — the system can still elect a leader and reach consensus. With only 2 alive (if 3 die), NO — can't form a quorum. This is why odd numbers of nodes are preferred (3, 5, 7). For AP systems (Cassandra with tunable consistency), even 1 node can respond if configured with consistency level ONE.",
+                            "tags": [
+                                "Quorum",
+                                "Fault Tolerance",
+                                "Consensus"
+                            ]
+                        },
+                        {
+                            "question": "What is the split-brain problem and how do you prevent it?",
+                            "hint": "Network partition causes two halves of a cluster to each believe they are the primary. Both accept writes → data divergence/corruption. Prevention: Quorum-based decisions (need majority), STONITH (Shoot The Other Node In The Head — fencing), odd number of nodes, lease-based leadership (leader must renew lease), witness/tiebreaker node in third AZ.",
+                            "tags": [
+                                "Split Brain",
+                                "Fault Tolerance",
+                                "High Availability"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "messaging-streaming",
+                "name": "Messaging & Streaming",
+                "icon": "MessageCircle",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is a message queue and why do we need one?",
+                            "hint": "Asynchronous communication buffer between services. Producer sends message, Consumer processes it later. Benefits: decoupling (services don't need to know about each other), load smoothing (handle traffic spikes), reliability (messages persist if consumer is down). Examples: RabbitMQ, SQS, ActiveMQ.",
+                            "tags": [
+                                "Message Queue",
+                                "Async",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is the Pub/Sub pattern?",
+                            "hint": "Publishers send messages to a topic (not directly to consumers). All subscribers to that topic receive a copy. One-to-many communication. Decoupled — publisher doesn't know who subscribes. Examples: notifications (new article → email service + push service + analytics service). Tools: Redis Pub/Sub, Google Pub/Sub, SNS.",
+                            "tags": [
+                                "Pub/Sub",
+                                "Messaging",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is the transactional outbox pattern?",
+                            "hint": "Problem: you need to update DB AND publish a message atomically. If DB succeeds but message fails (or vice versa), data is inconsistent. Solution: write both the DB change and the message to the same DB in one transaction (outbox table). A separate process reads the outbox and publishes messages. Guarantees at-least-once delivery with DB-level atomicity.",
+                            "tags": [
+                                "Outbox Pattern",
+                                "Transactions",
+                                "Messaging"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "What is Apache Kafka and how is it different from a traditional message queue?",
+                            "hint": "Kafka is a distributed event streaming platform, not just a queue. Differences: messages are persisted (retained for configurable time), consumers can replay messages, supports consumer groups (parallel processing), ordered within partitions, extremely high throughput. Traditional queues: message consumed once, then deleted. Kafka: append-only log, multiple consumers can read independently.",
+                            "tags": [
+                                "Kafka",
+                                "Streaming",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is a Dead Letter Queue (DLQ)?",
+                            "hint": "A separate queue that stores messages that failed processing after max retries. Prevents bad messages from blocking the main queue. Allows debugging failed messages without losing them. Common causes: invalid format, dependent service down, bug in consumer. Must monitor DLQ and have alerts + manual replay mechanism.",
+                            "tags": [
+                                "DLQ",
+                                "Message Queue",
+                                "Error Handling"
+                            ]
+                        },
+                        {
+                            "question": "How do you guarantee exactly-once message processing?",
+                            "hint": "Extremely hard in distributed systems. At-most-once: fire and forget. At-least-once: retry on failure (may duplicate). Exactly-once: use idempotent consumers (process same message twice with same result), deduplication with unique message IDs, transactional outbox pattern, Kafka transactions. Most systems settle for at-least-once + idempotent processing.",
+                            "tags": [
+                                "Messaging",
+                                "Exactly-Once",
+                                "Idempotency"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "Explain Event Sourcing and CQRS. When would you use them together?",
+                            "hint": "Event Sourcing: store state as a sequence of events (not current state). Can replay events to rebuild state. CQRS: separate read and write models — optimize each independently. Together: writes append events (event store), reads query a materialized view (built from events). Use when: audit trail needed, complex domain logic, high read/write asymmetry. Examples: banking ledger, collaborative editing.",
+                            "tags": [
+                                "Event Sourcing",
+                                "CQRS",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is stream processing and how does it differ from batch processing?",
+                            "hint": "Batch: process large chunks of data periodically (MapReduce, Spark). High latency, high throughput. Stream: process data in real-time as it arrives (Kafka Streams, Flink, Storm). Low latency, continuous. Use cases: real-time analytics, fraud detection, live dashboards. Lambda architecture combines both. Kappa architecture uses streams only.",
+                            "tags": [
+                                "Stream Processing",
+                                "Batch",
+                                "Real-time"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "You have a Kafka consumer that's lagging behind by millions of messages. How do you catch up without losing data?",
+                            "hint": "Increase consumer parallelism (add more consumers, up to partition count). Increase partition count for more parallelism. Batch processing (consume in bulk). Skip non-critical processing temporarily. Consumer should be idempotent so you can safely parallelize. Consider a separate 'catch-up' consumer with simpler logic. Check for slow consumer issues: network, DB writes, external calls. Monitor consumer lag with metrics (Burrow, Kafka lag exporter).",
+                            "tags": [
+                                "Kafka",
+                                "Consumer Lag",
+                                "Performance"
+                            ]
+                        },
+                        {
+                            "question": "Your event-driven system delivers events out of order. How do you handle it?",
+                            "hint": "Causes: multiple partitions (Kafka guarantees order per partition only), retries, multiple producers. Solutions: single partition per entity (partition by user_id), add sequence numbers/timestamps, idempotent processing with version checks, event buffer that reorders before processing, use last-writer-wins with vector clocks. Trade-off: strict ordering limits parallelism.",
+                            "tags": [
+                                "Event-Driven",
+                                "Ordering",
+                                "Distributed Systems"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "architecture-patterns",
+                "name": "Architecture Patterns",
+                "icon": "HardDrive",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "What is a monolithic architecture and when is it appropriate?",
+                            "hint": "Single deployable unit with all features. Appropriate for: small teams, MVPs, simple apps, when you don't need independent scaling. Advantages: simple development, easy debugging (one codebase), no network overhead between services. Drawbacks: scaling is all-or-nothing, deployment risk, technology lock-in.",
+                            "tags": [
+                                "Monolith",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is microservices architecture? What problems does it solve?",
+                            "hint": "Application as a collection of small, independent services. Each owns its data, deploys independently. Solves: independent scaling, technology diversity, team autonomy, fault isolation. But introduces: network complexity, distributed data management, operational overhead. Don't start with microservices — migrate when monolith becomes painful.",
+                            "tags": [
+                                "Microservices",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is event-driven architecture?",
+                            "hint": "Components communicate by producing and consuming events (asynchronous). Event = something that happened (OrderPlaced, UserRegistered). Benefits: loose coupling, easy to add new consumers, natural audit trail. Challenges: eventual consistency, debugging event chains, event schema evolution. Patterns: event notification, event-carried state transfer, event sourcing.",
+                            "tags": [
+                                "Event-Driven",
+                                "Architecture",
+                                "Async"
+                            ]
+                        },
+                        {
+                            "question": "What is serverless architecture? What are its trade-offs?",
+                            "hint": "Run code without managing servers (AWS Lambda, Cloud Functions). Pay per execution. Pros: zero ops, auto-scaling, cost-effective for bursty workloads. Cons: cold starts (100ms-5s), vendor lock-in, 15min execution limit, harder debugging, no persistent connections. Best for: event handlers, webhooks, API backends with variable traffic. Not ideal for: long-running jobs, WebSocket servers.",
+                            "tags": [
+                                "Serverless",
+                                "Architecture",
+                                "Cloud"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "What is the strangler fig pattern?",
+                            "hint": "A migration strategy for moving from monolith to microservices. Named after strangler fig trees that grow around a host tree. Gradually extract functionality into new services. Use a facade/proxy to route between old and new. Eventually the monolith shrinks to nothing. Low risk — you can stop at any point.",
+                            "tags": [
+                                "Migration",
+                                "Patterns",
+                                "Microservices"
+                            ]
+                        },
+                        {
+                            "question": "Explain the API Gateway pattern. What problem does it solve?",
+                            "hint": "Single entry point for all client requests. Routes to appropriate microservice. Handles: authentication, rate limiting, request aggregation, protocol translation, caching, logging. Without it: clients need to know about every service directly. Examples: Kong, AWS API Gateway, Nginx, Zuul.",
+                            "tags": [
+                                "API Gateway",
+                                "Microservices",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is a service mesh and when do you need one?",
+                            "hint": "Infrastructure layer for service-to-service communication (sidecar proxy pattern). Handles: mTLS, load balancing, circuit breaking, observability, retries — without changing application code. Examples: Istio, Linkerd. Need one when: many microservices, complex networking policies, need mutual TLS, want uniform observability. Overkill for small systems.",
+                            "tags": [
+                                "Service Mesh",
+                                "Microservices",
+                                "Networking"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How would you design a multi-tenant SaaS architecture?",
+                            "hint": "Options: Shared DB + tenant column (simplest, noisy neighbor risk), Schema per tenant (isolation, moderate complexity), DB per tenant (best isolation, hardest to manage). Consider: data isolation, noisy neighbor prevention, scaling, cost, compliance requirements. Hybrid approach: shared for small tenants, dedicated for enterprise. Use tenant context propagation (middleware/JWT claims).",
+                            "tags": [
+                                "Multi-tenancy",
+                                "SaaS",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "What is hexagonal architecture (ports and adapters)?",
+                            "hint": "Core business logic at center, surrounded by ports (interfaces) and adapters (implementations). Ports define how the core communicates (inbound: API, CLI; outbound: DB, messaging). Adapters implement ports (e.g., PostgresAdapter implements UserRepository port). Benefits: core is testable in isolation, swap implementations easily (swap Postgres for MongoDB), framework-agnostic business logic.",
+                            "tags": [
+                                "Hexagonal",
+                                "Clean Architecture",
+                                "Patterns"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "Your company has 200 microservices. Deploying a single feature requires coordinating changes across 5 services. What went wrong?",
+                            "hint": "Wrong service boundaries — services are too fine-grained or not aligned with business domains (Domain-Driven Design). This is a 'distributed monolith' — you have all the complexity of microservices with none of the benefits. Fix: identify bounded contexts properly, merge tightly coupled services, use event-driven communication instead of synchronous calls, avoid shared databases between services.",
+                            "tags": [
+                                "Microservices",
+                                "DDD",
+                                "Architecture",
+                                "Anti-patterns"
+                            ]
+                        },
+                        {
+                            "question": "Your team is debating whether to build a new feature as a microservice or add it to the monolith. How do you decide?",
+                            "hint": "Consider: Does it need independent scaling? Different deployment cadence? Different tech stack? Different team ownership? If YES to most → microservice. If NO → keep in monolith. Also consider: team size (small team + microservices = overhead), data coupling (shared DB = monolith smell), operational maturity (do you have monitoring, CI/CD, tracing?). Default to monolith unless you have clear reasons not to.",
+                            "tags": [
+                                "Architecture",
+                                "Decision Making",
+                                "Microservices"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "real-world-scenarios",
+                "name": "Real-World Scenarios",
+                "icon": "ShieldCheck",
+                "questions": {
+                    "basic": [
+                        {
+                            "question": "How does a URL shortener like bit.ly work?",
+                            "hint": "Generate a unique short code (base62 encoding of auto-increment ID or hash). Store mapping: short_code → long_url in database (with Redis cache for hot URLs). On access: look up short code → 301/302 redirect to long URL. Consider: collision handling, analytics (click tracking), custom aliases, expiration.",
+                            "tags": [
+                                "URL Shortener",
+                                "System Design",
+                                "Hashing"
+                            ]
+                        },
+                        {
+                            "question": "How does a chat application deliver real-time messages?",
+                            "hint": "WebSocket connection for persistent bidirectional communication. Client connects → server maintains connection → messages pushed instantly. For group chats: fan-out to all connected members. Offline users: store messages, deliver on reconnect. At scale: connection servers + message routing service + message storage. Presence system to show online/offline.",
+                            "tags": [
+                                "Chat",
+                                "WebSocket",
+                                "Real-time"
+                            ]
+                        },
+                        {
+                            "question": "How would you design a file storage system like Google Drive or Dropbox?",
+                            "hint": "Object storage backend (S3). File metadata in DB (name, owner, permissions, version). Chunking: split large files into blocks for efficient upload/sync. Deduplication: hash each chunk, store only unique blocks. Sync: track file changes, push/pull diffs. Sharing: ACL per file/folder. Versioning: keep old versions, delta compression. Thumbnail/preview generation via worker queue.",
+                            "tags": [
+                                "File Storage",
+                                "System Design",
+                                "Cloud"
+                            ]
+                        }
+                    ],
+                    "medium": [
+                        {
+                            "question": "How does Netflix handle streaming video to millions of concurrent users?",
+                            "hint": "CDN (Open Connect — their own CDN with ISP-hosted servers). Adaptive bitrate streaming (adjusts quality based on bandwidth). Content encoded in multiple formats/resolutions (transcoding farm). Microservices architecture. Chaos engineering (Chaos Monkey). Client-side buffering. Personalization and recommendation via ML. Zuul gateway for routing.",
+                            "tags": [
+                                "Netflix",
+                                "CDN",
+                                "Streaming",
+                                "Architecture"
+                            ]
+                        },
+                        {
+                            "question": "Design a notification system for a social media app.",
+                            "hint": "Event triggers (new like, comment, follow) → event queue (Kafka) → notification service → routes to channels (push, email, SMS, in-app). User preferences for notification types. Rate limiting (don't spam). Batching (10 people liked your post). Priority queue (friend request > marketing). Storage for notification history. Read/unread tracking. Fan-out problem for influencer posts.",
+                            "tags": [
+                                "Notifications",
+                                "System Design",
+                                "Messaging"
+                            ]
+                        },
+                        {
+                            "question": "How would you design an online payment system like Stripe?",
+                            "hint": "Idempotency keys (prevent double charging). PCI DSS compliance (never store raw card numbers). Tokenization. Two-phase: authorize → capture. Webhooks for async status updates. Retry with exponential backoff. Distributed transactions (Saga pattern). Fraud detection (ML models). Multiple payment processor fallback. Audit logging for every transaction.",
+                            "tags": [
+                                "Payments",
+                                "Security",
+                                "System Design"
+                            ]
+                        },
+                        {
+                            "question": "How would you design a ride-sharing system like Uber?",
+                            "hint": "Location service: drivers send GPS updates (every 3-5s) → geospatial index (Redis GeoHash/PostGIS). Matching: find nearest available drivers, ETA calculation. Pricing: surge pricing based on demand/supply ratio. Trip lifecycle: request → match → pickup → in-progress → complete → payment. Real-time tracking via WebSocket. Rating system. Handle: driver/rider cancellations, payment failures.",
+                            "tags": [
+                                "Uber",
+                                "Geospatial",
+                                "Real-time",
+                                "System Design"
+                            ]
+                        },
+                        {
+                            "question": "How would you design a social media feed like Twitter's timeline?",
+                            "hint": "Fan-out on write: when user posts, push to all followers' feeds (fast reads, expensive writes for celebs). Fan-out on read: pull from followed users at read time (slow reads, simple writes). Hybrid: fan-out on write for normal users, fan-out on read for celebs (>1M followers). Feed stored in Redis sorted set (by timestamp). Infinite scroll with cursor pagination.",
+                            "tags": [
+                                "Social Media",
+                                "Feed",
+                                "Fan-out",
+                                "System Design"
+                            ]
+                        }
+                    ],
+                    "advanced": [
+                        {
+                            "question": "How would you design a distributed job scheduler like cron at scale?",
+                            "hint": "Job store (DB with job definitions + schedules). Scheduler nodes that pick up due jobs. Distributed locking to prevent duplicate execution. Job queues for immediate execution. Support: recurring (cron expression), one-time, delayed. Handle: missed jobs (catch-up), long-running jobs, retries, priority. High availability: leader election for master scheduler. Monitoring: job latency, failure rates. Tools inspiration: Quartz, Temporal, Airflow.",
+                            "tags": [
+                                "Job Scheduler",
+                                "Distributed Systems",
+                                "System Design"
+                            ]
+                        },
+                        {
+                            "question": "Design a system like Google Maps that calculates real-time traffic routing.",
+                            "hint": "Road network as weighted directed graph. Dijkstra's/A* for shortest path. Pre-computation: contraction hierarchies for fast queries. Real-time: GPS data from millions of phones → traffic speed estimation → dynamic edge weights. Map tiles served via CDN. Routing microservice separate from map rendering. Fallback for offline navigation.",
+                            "tags": [
+                                "Maps",
+                                "Graph",
+                                "Real-time",
+                                "System Design"
+                            ]
+                        }
+                    ],
+                    "tricky": [
+                        {
+                            "question": "It's Black Friday. Your e-commerce site needs to handle 100x normal traffic in the next 2 hours. You have 30 minutes to prepare. What do you do?",
+                            "hint": "Immediate: Max out auto-scaling limits. Pre-warm instances. Enable more aggressive caching (increase TTLs). Put non-critical services in degraded mode. Enable feature flags to disable heavy features (recommendations, analytics). Switch to a static homepage/cached product pages. Queue non-critical writes (order confirmations can be async). Alert on-call team. Open connection pool limits. Scale DB read replicas.",
+                            "tags": [
+                                "Scalability",
+                                "Emergency",
+                                "Real-world"
+                            ]
+                        },
+                        {
+                            "question": "A user reports that they placed an order but got charged twice. Walk through how you would investigate and prevent this.",
+                            "hint": "Investigate: Check payment gateway logs (were there two charge requests?). Check for retry logic on timeout. Check idempotency key usage. Check if client submitted form twice (no disable-after-click). Prevention: Idempotency keys on payment APIs. Disable button after first click. Deduplication at payment service level. Use payment intents (create intent → confirm intent pattern). Distributed lock on order_id during payment processing.",
+                            "tags": [
+                                "Payments",
+                                "Debugging",
+                                "Idempotency"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

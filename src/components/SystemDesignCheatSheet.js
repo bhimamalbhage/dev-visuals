@@ -18,6 +18,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import systemDesignData from '../data/system-design.json';
+import interviewData from '../data/interview-questions.json';
 
 const SystemDesignCheatSheet = () => {
   const [activeDiagram, setActiveDiagram] = useState('architecture-patterns');
@@ -1641,6 +1642,157 @@ const SystemDesignCheatSheet = () => {
     );
   };
 
+  const InterviewQuestionsDiagram = () => {
+    const [selectedCategory, setSelectedCategory] = useState('networking-dns');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('basic');
+    const [expandedQuestion, setExpandedQuestion] = useState(null);
+
+    const { categories } = interviewData.interviewQuestions;
+    const activeCategory = categories.find(c => c.id === selectedCategory);
+    const questions = activeCategory?.questions[selectedDifficulty] || [];
+
+    const difficultyConfig = {
+      basic: { label: 'Basic', color: 'green', bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-300', activeBg: 'bg-green-600' },
+      medium: { label: 'Medium', color: 'yellow', bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-300', activeBg: 'bg-yellow-500' },
+      advanced: { label: 'Advanced', color: 'orange', bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300', activeBg: 'bg-orange-500' },
+      tricky: { label: 'Tricky', color: 'red', bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-300', activeBg: 'bg-red-600' }
+    };
+
+    const getQuestionCount = (cat, diff) => cat?.questions[diff]?.length || 0;
+
+    return (
+      <div className="w-full bg-gray-50 rounded-lg overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
+        <div className="flex h-full">
+          {/* Category Sidebar */}
+          <div className="w-64 border-r border-slate-200 bg-slate-50 overflow-y-auto p-2 space-y-1 flex-shrink-0">
+            <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Categories</div>
+            {categories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => { setSelectedCategory(cat.id); setExpandedQuestion(null); }}
+                className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200 shadow-sm'
+                    : 'text-slate-600 hover:bg-white hover:shadow-sm border border-transparent'
+                }`}
+              >
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center mr-2.5 flex-shrink-0 ${
+                  selectedCategory === cat.id ? 'bg-blue-200 text-blue-700' : 'bg-slate-200 text-slate-500'
+                }`}>
+                  {getIcon(cat.icon)}
+                </span>
+                <span className="font-medium text-sm leading-tight truncate">{cat.name}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Header + Difficulty Tabs */}
+            <div className="bg-white border-b border-slate-200 px-6 py-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-bold text-slate-800">{activeCategory?.name}</h3>
+                <span className="text-sm text-slate-400">
+                  {questions.length} question{questions.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+              <div className="flex space-x-2">
+                {Object.entries(difficultyConfig).map(([key, config]) => (
+                  <button
+                    key={key}
+                    onClick={() => { setSelectedDifficulty(key); setExpandedQuestion(null); }}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center space-x-1.5 ${
+                      selectedDifficulty === key
+                        ? `${config.activeBg} text-white shadow-sm`
+                        : `${config.bg} ${config.text} hover:opacity-80`
+                    }`}
+                  >
+                    <span>{config.label}</span>
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                      selectedDifficulty === key
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white/60'
+                    }`}>
+                      {getQuestionCount(activeCategory, key)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Questions List */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-3">
+              {questions.length === 0 ? (
+                <div className="text-center text-slate-400 py-12">
+                  <p className="text-lg">No questions in this category at this level yet.</p>
+                </div>
+              ) : (
+                questions.map((q, idx) => (
+                  <div
+                    key={idx}
+                    className={`bg-white rounded-xl border transition-all cursor-pointer ${
+                      expandedQuestion === idx
+                        ? 'border-blue-300 shadow-md ring-1 ring-blue-100'
+                        : 'border-slate-200 hover:border-blue-200 hover:shadow-sm'
+                    }`}
+                    onClick={() => setExpandedQuestion(expandedQuestion === idx ? null : idx)}
+                  >
+                    <div className="px-5 py-4 flex items-start">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 text-sm font-bold ${
+                        expandedQuestion === idx
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        {idx + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-medium leading-relaxed ${
+                          expandedQuestion === idx ? 'text-blue-800' : 'text-slate-800'
+                        }`}>
+                          {q.question}
+                        </p>
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {q.tags.map((tag, tIdx) => (
+                            <span key={tIdx} className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-xs font-medium">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className={`ml-3 flex-shrink-0 transition-transform ${
+                        expandedQuestion === idx ? 'rotate-180' : ''
+                      }`}>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Expanded Hint */}
+                    {expandedQuestion === idx && (
+                      <div className="px-5 pb-5 pt-0">
+                        <div className="ml-12 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4">
+                          <div className="flex items-center mb-2">
+                            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">💡 Answer Direction</span>
+                          </div>
+                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                            {q.hint}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const allDiagrams = [
       { id: 'architecture-patterns', name: 'Architecture' },
       { id: 'networking', name: 'Networking' },
@@ -1651,7 +1803,8 @@ const SystemDesignCheatSheet = () => {
       { id: 'messaging', name: 'Messaging & Streaming' },
       { id: 'distributed-systems', name: 'Distributed Systems' },
       { id: 'communication', name: 'Communication' },
-      { id: 'end-to-end', name: 'End-to-End Flow' }
+      { id: 'end-to-end', name: 'End-to-End Flow' },
+      { id: 'interview-questions', name: 'Interview Q&A' }
   ];
 
   const renderDiagram = () => {
@@ -1666,6 +1819,7 @@ const SystemDesignCheatSheet = () => {
       case 'distributed-systems': return <DistributedSystemsDiagram />;
       case 'communication': return <CommunicationDiagram />;
       case 'end-to-end': return <EndToEndDiagram />;
+      case 'interview-questions': return <InterviewQuestionsDiagram />;
       default: return <ArchitecturePatternsDiagram />;
     }
   };
