@@ -657,80 +657,135 @@
                     "id": "cap-theorem",
                     "name": "CAP Theorem",
                     "icon": "Database",
-                    "description": "In a distributed system, you can only satisfy two of the three guarantees: Consistency, Availability, Partition Tolerance.",
+                    "description": "In a distributed system, you can only pick TWO: Consistency, Availability, Partition Tolerance.",
+                    "analogy": "The 'Fast, Good, Cheap' triangle. You can't have all three.",
+                    "flow": {
+                        "title": "Network Partition Scenario",
+                        "steps": [
+                            "1. Network fails between Data Center A and B (Partition occurs - P).",
+                            "2. You MUST have P to be distributed.",
+                            "3. User writes to Data Center A.",
+                            "4. System Choice: Do we accept the write?",
+                            "5. Option CP: Refuse write (Error) -> Consistent but Unavailable.",
+                            "6. Option AP: Accept write -> Available but Inconsistent (Data Center B doesn't know)."
+                        ]
+                    },
                     "details": [
-                        "CP: Consistency + Partition Tolerance (e.g. HBase, MongoDB, Redis)",
-                        "AP: Availability + Partition Tolerance (e.g. Cassandra, CouchDB, DynamoDB)",
-                        "CA: Consistency + Availability (RDBMS - theoretically impossible in distributed systems as partitions happen)"
+                        "CP: Consistency + Partition Tolerance (e.g. Banking - prevent double spend).",
+                        "AP: Availability + Partition Tolerance (e.g. TikTok Feed - show old videos if needed, just don't crash).",
+                        "CA: Theoretical only. If network breaks, you must choose C or A."
                     ],
-                    "example": "Banking needs CP (Postgres/Oracle). Social Feeds need AP (Cassandra)."
+                    "example": "Banking needs CP. Social Feeds need AP."
                 },
                 {
                     "id": "consistency-models",
                     "name": "Consistency Models",
                     "icon": "Clock",
-                    "description": "Defines the specific contract for how and when updates to the system become visible to other actors.",
+                    "description": "Rules for when a write becomes visible to readers.",
+                    "analogy": "Shared Google Doc (Strong) vs Email Attachment (Eventual).",
                     "types": [
                         {
                             "name": "Strong Consistency",
-                            "desc": "All reads receive the most recent write or an error."
+                            "desc": "Everyone sees the same data at the same time (like a Google Doc)."
                         },
                         {
                             "name": "Eventual Consistency",
-                            "desc": "Reads effectively return the most recent write, but maybe not immediately."
-                        },
-                        {
-                            "name": "Causal Consistency",
-                            "desc": "Writes that are potentially causally related must be seen by all processes in the same order."
+                            "desc": "Updates propagate slowly. You might see old data for a bit (like Email)."
                         }
                     ],
-                    "example": "Strong: Bank Balance. Eventual: DNS, YouTube View Count."
+                    "example": "Strong: Bank Balance. Eventual: YouTube View Count."
                 },
                 {
                     "id": "leader-election",
                     "name": "Leader Election",
                     "icon": "ShieldCheck",
-                    "description": "Process of designating a single process as the organizer of some task among several computers (nodes).",
+                    "description": "Deciding which node is the 'Boss' to coordinate tasks.",
+                    "analogy": "Class Monitor. If the teacher leaves, students vote for a monitor to keep order.",
+                    "flow": {
+                        "title": "Leader Crash Scenario",
+                        "steps": [
+                            "1. Leader Node crashes.",
+                            "2. Worker nodes stop receiving 'Heartbeats'.",
+                            "3. Workers trigger an 'Election'.",
+                            "4. Nodes vote (based on ID, uptime, etc.).",
+                            "5. New Leader is elected.",
+                            "6. System resumes normal operation."
+                        ]
+                    },
                     "details": [
-                        "Needed to avoid conflicts and ensure coordination.",
-                        "Common algorithms: Bully Algorithm, Ring Algorithm.",
-                        "Used in databases (Primary/Replica) and coordination services (Zookeeper)."
+                        "Needed to avoid conflicts (Split Brain).",
+                        "Used in databases (Primary/Replica)."
                     ],
-                    "example": "Kubernetes Controller Manager, Kafka Controller, MongoDB Primary."
+                    "example": "Kubernetes Controller, Kafka Controller."
                 },
                 {
                     "id": "consensus",
                     "name": "Consensus (Raft/Paxos)",
                     "icon": "Handshake",
-                    "description": "The process of getting all nodes in a distributed system to agree on a single data value or state, even if some nodes fail.",
+                    "description": "Getting a group of computers to agree on a single value, even if some crash.",
+                    "analogy": "Group of friends deciding on lunch. You need a majority to agree before it's official.",
+                    "flow": {
+                        "title": "Raft Log Replication",
+                        "steps": [
+                            "1. Leader receives a command (e.g., 'Set X=5').",
+                            "2. Leader appends it to its log (uncommitted).",
+                            "3. Leader sends 'AppendEntries' to all Followers.",
+                            "4. Followers write to their logs and send 'Success'.",
+                            "5. Leader gets majority success? -> COMMIT.",
+                            "6. Leader tells Followers to COMMIT.",
+                            "7. Client gets 'Success'."
+                        ]
+                    },
                     "details": [
-                        "Paxos: The original, theoretically rigorous but complex consensus algorithm.",
-                        "Raft: Designed to be understandable. Uses Leader Election + Log Replication.",
+                        "Raft: Easier to understand. Uses Leader Election + Log Replication.",
                         "Goal: Fault Tolerance. System works as long as a quorum (majority) is up."
                     ],
-                    "example": "Etcd (Kubernetes), Consul, Zookeeper."
+                    "example": "Etcd (Kubernetes), Zookeeper."
                 },
                 {
                     "id": "distributed-locking",
                     "name": "Distributed Locking",
                     "icon": "Lock",
-                    "description": "A technique to control access to a shared resource by multiple processes in a distributed environment.",
+                    "description": "Ensuring only ONE process can access a resource at a time across different servers.",
+                    "analogy": "Airplane Toilet. Only one person can be inside; the 'Occupied' sign tells others to wait.",
+                    "flow": {
+                        "title": "Cron Job Lock Scenario",
+                        "steps": [
+                            "1. Cron Job starts on Server A and Server B at the same time.",
+                            "2. Server A tries to set 'Lock:Cron' in Redis.",
+                            "3. Success! Server A gets the lock (with a 30s timeout).",
+                            "4. Server B tries to set 'Lock:Cron'...",
+                            "5. Fails! Lock exists. Server B gives up (or waits).",
+                            "6. Server A finishes work and deletes the key (Release)."
+                        ]
+                    },
                     "details": [
-                        "Prevents race conditions across different servers.",
-                        "Must handle node failures (TTL/Leases).",
-                        "Tools: Redis (Redlock), Zookeeper, Etcd."
+                        "Prevents race conditions (e.g., charging a user twice).",
+                        "Must handle node failures (TTL/Leases so locks don't stay forever)."
                     ],
-                    "example": "Preventing a cron job from running twice on different servers."
+                    "example": "Preventing a cron job from running twice, Flash Sales."
                 },
                 {
                     "id": "quorum",
                     "name": "Quorum",
                     "icon": "Users",
-                    "description": "The minimum number of votes that a distributed transaction has to obtain to be allowed to perform an operation.",
+                    "description": "The minimum number of votes needed to perform an operation.",
+                    "analogy": "Parliament. You need 51% of members present to pass a law.",
+                    "flow": {
+                        "title": "Database Write Quorum",
+                        "steps": [
+                            "1. You have 3 Database Nodes (N=3).",
+                            "2. You set Write Quorum (W) = 2.",
+                            "3. Client sends write to DB.",
+                            "4. DB sends write to Node 1, 2, and 3.",
+                            "5. Node 1 and Node 2 reply 'Success'.",
+                            "6. That's 2 acks! (Met Quorum).",
+                            "7. Client gets 'Success' (even if Node 3 is slow/down)."
+                        ]
+                    },
                     "details": [
                         "N = Total Nodes, R = Read Quorum, W = Write Quorum.",
-                        "Strong Consistency: R + W > N.",
-                        "Ensures read returns the latest write."
+                        "Strong Consistency Rule: R + W > N."
                     ],
                     "example": "Cassandra (tunable consistency), DynamoDB."
                 },
@@ -738,23 +793,35 @@
                     "id": "gossip-protocol",
                     "name": "Gossip Protocol",
                     "icon": "MessageCircle",
-                    "description": "A peer-to-peer communication protocol where nodes share information about themselves and other nodes periodically.",
+                    "description": "Nodes randomly share info with neighbors until everyone knows.",
+                    "analogy": "Viral Rumors. You tell 2 friends, they tell 2 friends... soon the whole school knows.",
+                    "flow": {
+                        "title": "Cluster State Propagation",
+                        "steps": [
+                            "1. Node A detects that Node Z is DOWN.",
+                            "2. Node A tells random neighbors (Node B and C).",
+                            "3. Node B tells Node D and E.",
+                            "4. Node C tells Node F.",
+                            "5. Within seconds, the whole cluster knows 'Node Z is DOWN'.",
+                            "6. No central coordinate needed."
+                        ]
+                    },
                     "details": [
                         "Scalable and Fault Tolerant.",
                         "Eventual Consistency.",
-                        "Used for failure detection and cluster membership."
+                        "Used for failure detection."
                     ],
-                    "example": "Cassandra ring membership, Amazon S3, Bitcoin."
+                    "example": "Cassandra ring, Amazon S3, Bitcoin."
                 },
                 {
                     "id": "vector-clocks",
                     "name": "Vector Clocks",
                     "icon": "Clock",
-                    "description": "A data structure used for determining the partial ordering of events in a distributed system and detecting causality violations.",
+                    "description": "A way to track 'what happened before what' without trusting wall clocks.",
+                    "analogy": "Git Commit History. We know feature-branch came after master because it has all of master's history + new stuff.",
                     "details": [
-                        "Replaces physical time (which is unreliable).",
-                        "Helps resolve conflicts (e.g. sibling creation).",
-                        "Used in Dynamo-style databases."
+                        "Replaces physical time (which drifts).",
+                        "Helps resolve conflicts (e.g. two people editing the same file offline)."
                     ],
                     "example": "Riak, Amazon Dynamo."
                 },
@@ -762,9 +829,20 @@
                     "id": "split-brain",
                     "name": "Split Brain",
                     "icon": "Zap",
-                    "description": "A condition where a network partition causes two distinct parts of a distributed system to believe they are the authoritative master.",
+                    "description": "When the network breaks and TWO nodes think they are the Boss.",
+                    "analogy": "Two Bosses giving contradictory orders because they can't talk to each other.",
+                    "flow": {
+                        "title": "Database Failover Crisis",
+                        "steps": [
+                            "1. Primary DB (A) loses connection to Replica (B).",
+                            "2. Replica (B) thinks Primary (A) is dead.",
+                            "3. Replica (B) promotes itself to Primary.",
+                            "4. But Primary (A) is still alive and taking writes!",
+                            "5. Now you have TWO Primaries accepting different data.",
+                            "6. Result: Data corruption/loss when they reconnect."
+                        ]
+                    },
                     "details": [
-                        "Dangerous: Leads to data corruption/inconsistency.",
                         "Prevention: Fencing, Quorums (Odd number of nodes).",
                         "STONITH (Shoot The Other Node In The Head)."
                     ],
@@ -778,7 +856,32 @@
                     "id": "polling",
                     "name": "Short Polling",
                     "icon": "RefreshCw",
-                    "description": "The client repeatedly sends requests to the server at fixed intervals to check for new data.",
+                    "description": "The client keeps asking the server 'Do you have new data?' at fixed intervals (e.g., every 5 seconds).",
+                    "analogy": "Kids in the back seat asking 'Are we there yet?' every minute.",
+                    "flow": {
+                        "title": "Dashboard Refresh Flow",
+                        "steps": [
+                            "1. Client: 'Any new data?'",
+                            "2. Server: 'No.'",
+                            "3. Client waits 5 seconds...",
+                            "4. Client: 'Any new data?'",
+                            "5. Server: 'No.'",
+                            "6. Client waits 5 seconds...",
+                            "7. Client: 'Any new data?'",
+                            "8. Server: 'Yes! Here it is.'",
+                            "9. Client displays data."
+                        ]
+                    },
+                    "qa": [
+                        {
+                            "q": "Is this efficient?",
+                            "a": "Not really. Most checks return 'empty', wasting bandwidth and server power processing useless requests."
+                        },
+                        {
+                            "q": "When should I use it?",
+                            "a": "For non-critical data that doesn't change often (e.g., refreshing a weather widget every 10 mins)."
+                        }
+                    ],
                     "pros": [
                         "Simple to implement",
                         "Good for less frequent updates"
@@ -788,13 +891,31 @@
                         "High latency (wait for next poll)",
                         "Server load"
                     ],
-                    "example": "Dashboard refreshing every 10 seconds."
+                    "example": "Legacy dashboards, Weather widgets."
                 },
                 {
                     "id": "long-polling",
                     "name": "Long Polling",
                     "icon": "Clock",
-                    "description": "The client sends a request, and the server holds it open until new data is available or a timeout occurs.",
+                    "description": "The client asks for data, and the server *holds* the connection open until data is available.",
+                    "analogy": "Ordering a pizza and getting a buzzer. You wait, and it buzzes ONLY when the pizza is ready.",
+                    "flow": {
+                        "title": "Uber Eats Order Status",
+                        "steps": [
+                            "1. Client: 'Is my order ready?' (Request opens)",
+                            "2. Server: ... (Holds request open, waiting for restaurant)",
+                            "3. [Time passes...]",
+                            "4. Restaurant: 'Order Ready!'",
+                            "5. Server: 'Yes! Order is ready.' (Responses sent immediately)",
+                            "6. Client: displays 'Ready', then immediately opens NEW request for 'Driver Assigned?'"
+                        ]
+                    },
+                    "qa": [
+                        {
+                            "q": "Is this real-time?",
+                            "a": "Almost. It's much faster than short polling, but there's a small delay while the client reconnects after receiving data."
+                        }
+                    ],
                     "pros": [
                         "Better than short polling for real-time",
                         "Works over standard HTTP"
@@ -803,13 +924,49 @@
                         "Server must manage open connections",
                         "Request/Response overhead still exists"
                     ],
-                    "example": "Chat applications (before WebSockets), Notification updates."
+                    "example": "Chat apps (before WebSockets), Notification updates."
                 },
                 {
                     "id": "websockets",
                     "name": "WebSockets",
                     "icon": "ArrowLeftRight",
                     "description": "A persistent, full-duplex communication channel over a single TCP connection.",
+                    "handshake": {
+                        "steps": [
+                            "1. Client sends HTTP Request with `Upgrade: websocket` and `Connection: Upgrade` headers.",
+                            "2. Client sends a `Sec-WebSocket-Key` (random base64 string).",
+                            "3. Server validates, switches protocols, and responds with HTTP 101 Switching Protocols.",
+                            "4. Server sends `Sec-WebSocket-Accept` header (derived from client key) to prove it received the handshake.",
+                            "5. Connection is now upgraded to a persistent TCP socket for bidirectional binary/text data."
+                        ]
+                    },
+                    "flow": {
+                        "title": "WhatsApp Message Flow",
+                        "steps": [
+                            "1. User A opens WhatsApp -> App establishes/resumes WebSocket connection to Chat Server.",
+                            "2. User A types 'Hello' and hits send.",
+                            "3. Client pushes message payload (encrypted) via WebSocket to Server.",
+                            "4. Server receives message, stores it in DB (for history), and acknowledges receipt to User A (single tick).",
+                            "5. Server checks if User B is connected via WebSocket.",
+                            "6. IF Connected: Server pushes message to User B instantly.",
+                            "7. IF Disconnected: Server holds message (or uses Push Notification service like FCM/APNs to wake up User B).",
+                            "8. User B receives message -> App sends 'Delivered' ack via WebSocket -> Server updates User A (double tick)."
+                        ]
+                    },
+                    "qa": [
+                        {
+                            "q": "Do I have 100 connections for 100 chats?",
+                            "a": "No. You have ONE WebSocket connection to the WhatsApp server. All messages for all 100 chats flow through this single pipe. The payload contains the 'chatID' to route it to the correct UI thread."
+                        },
+                        {
+                            "q": "When does the connection start/close?",
+                            "a": "Start: When you open the app (foreground) or a background service starts. Close: When you kill the app, lose internet, or the OS kills the background process to save battery."
+                        },
+                        {
+                            "q": "What happens if internet drops?",
+                            "a": "The TCP connection breaks. The client detects this (heartbeat failure) and attempts to reconnect. Queued messages are sent once reconnected."
+                        }
+                    ],
                     "pros": [
                         "True real-time (low latency)",
                         "Bi-directional (Server can push)",
@@ -825,7 +982,33 @@
                     "id": "webhooks",
                     "name": "Webhooks",
                     "icon": "Zap",
-                    "description": "User-defined HTTP callbacks. The server pushes data to a client's URL when an event occurs.",
+                    "description": "The server automatically sends data to your URL when something happens. No asking required.",
+                    "analogy": "Don't call us, we'll call you.",
+                    "flow": {
+                        "title": "Stripe Payment Flow",
+                        "steps": [
+                            "1. User buys a T-Shirt on your site.",
+                            "2. Payment is processed by Stripe (External Provider).",
+                            "3. Stripe: 'Payment Successful!'",
+                            "4. Stripe looks up your Webhook URL (e.g. your-site.com/api/payment-hook).",
+                            "5. Stripe transmits data (HTTP POST) to your URL.",
+                            "6. Your Server receives the data and ships the T-Shirt."
+                        ]
+                    },
+                    "qa": [
+                        {
+                            "q": "Do I need a server?",
+                            "a": "Yes. You need a public URL (endpoint) to receive the data from the provider."
+                        },
+                        {
+                            "q": "What if my server is down?",
+                            "a": "The provider usually retries sending the webhook for a while (exponential backoff). If you're down too long, you miss the event."
+                        },
+                        {
+                            "q": "How do I know it's really Stripe?",
+                            "a": "Security! You verify the cryptographic signature in the header to ensure the data came from them."
+                        }
+                    ],
                     "pros": [
                         "No polling required (Server Push)",
                         "Efficient for event-driven workflows"

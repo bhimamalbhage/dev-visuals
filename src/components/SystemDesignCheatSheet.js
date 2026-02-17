@@ -1475,6 +1475,45 @@ const SystemDesignCheatSheet = () => {
                       <h5 className="font-semibold text-gray-700 mb-1 text-xs uppercase">Example:</h5>
                       <p className="text-gray-600 text-sm">{concept.example}</p>
                    </div>
+
+                    {/* Analogy Section */}
+                    {concept.analogy && (
+                        <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r">
+                            <p className="text-sm text-yellow-800 italic">
+                                <span className="font-bold not-italic mr-1">💡 Analogy:</span>
+                                "{concept.analogy}"
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Flow Section */}
+                    {concept.flow && (
+                        <div className="mt-4 bg-blue-50 p-3 rounded border border-blue-100">
+                            <h5 className="font-semibold text-blue-800 mb-2 text-sm">
+                                {concept.flow.title}
+                            </h5>
+                            <ol className="list-decimal pl-5 space-y-1 text-sm text-gray-700">
+                                {concept.flow.steps.map((step, i) => (
+                                    <li key={i} className="pl-1">{step}</li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+
+                    {/* Q&A Section */}
+                    {concept.qa && (
+                        <div className="mt-4">
+                            <h5 className="font-semibold text-gray-800 mb-2">Common Questions:</h5>
+                            <div className="space-y-3">
+                                {concept.qa.map((item, i) => (
+                                    <div key={i} className="bg-gray-50 p-3 rounded border border-gray-200">
+                                        <p className="font-semibold text-sm text-gray-900 mb-1">Q: {item.q}</p>
+                                        <p className="text-sm text-gray-600">A: {item.a}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-col items-center justify-center bg-gray-50 rounded p-4 border border-gray-100">
@@ -1607,6 +1646,15 @@ const SystemDesignCheatSheet = () => {
                <p className="text-gray-700 mb-4">
                  {communication.patterns.find(p => p.id === selectedPattern)?.description}
                </p>
+
+               {communication.patterns.find(p => p.id === selectedPattern)?.analogy && (
+                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded-r">
+                       <p className="text-sm text-yellow-800 italic">
+                           <span className="font-bold not-italic mr-1">💡 Analogy:</span>
+                           "{communication.patterns.find(p => p.id === selectedPattern)?.analogy}"
+                       </p>
+                   </div>
+               )}
                
                <div className="mb-4">
                  <h5 className="font-semibold text-green-700 mb-2">Pros:</h5>
@@ -1632,6 +1680,47 @@ const SystemDesignCheatSheet = () => {
                         {communication.patterns.find(p => p.id === selectedPattern)?.example}
                     </p>
                 </div>
+
+                {/* Handshake Section */}
+                {communication.patterns.find(p => p.id === selectedPattern)?.handshake && (
+                    <div className="mt-4">
+                        <h5 className="font-semibold text-purple-700 mb-2">Handshake Process:</h5>
+                        <ul className="list-decimal pl-5 space-y-1 text-sm text-gray-600">
+                            {communication.patterns.find(p => p.id === selectedPattern)?.handshake.steps.map((step, i) => (
+                                <li key={i} className="pl-1">{step}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Flow Section */}
+                {communication.patterns.find(p => p.id === selectedPattern)?.flow && (
+                    <div className="mt-4 bg-blue-50 p-3 rounded border border-blue-100">
+                        <h5 className="font-semibold text-blue-800 mb-2 text-sm">
+                            {communication.patterns.find(p => p.id === selectedPattern)?.flow.title}
+                        </h5>
+                        <ol className="list-decimal pl-5 space-y-1 text-sm text-gray-700">
+                             {communication.patterns.find(p => p.id === selectedPattern)?.flow.steps.map((step, i) => (
+                                <li key={i} className="pl-1">{step}</li>
+                            ))}
+                        </ol>
+                    </div>
+                )}
+
+                {/* Q&A Section */}
+                {communication.patterns.find(p => p.id === selectedPattern)?.qa && (
+                    <div className="mt-4">
+                        <h5 className="font-semibold text-gray-800 mb-2">Common Questions:</h5>
+                        <div className="space-y-3">
+                             {communication.patterns.find(p => p.id === selectedPattern)?.qa.map((item, i) => (
+                                <div key={i} className="bg-gray-50 p-3 rounded border border-gray-200">
+                                    <p className="font-semibold text-sm text-gray-900 mb-1">Q: {item.q}</p>
+                                    <p className="text-sm text-gray-600">A: {item.a}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
             <div className="flex flex-col items-center justify-center bg-gray-50 rounded p-4">
               {communicationDiagrams[selectedPattern]}
